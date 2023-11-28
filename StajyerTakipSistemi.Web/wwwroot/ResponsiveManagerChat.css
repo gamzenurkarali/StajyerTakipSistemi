@@ -1,0 +1,87 @@
+﻿@media (max-width: 1270px) {
+	 
+	
+	.left-area {
+		width: 100% !important;
+	}
+/*
+	.right-area {
+		display: none !important;
+	}*/
+	 
+	.left-area {
+		width: 100% !important;
+		 
+	}
+	.chat-mid {
+		 
+		width: 100% !important;
+	}
+	#secilenDosya {
+		 
+		width: 100% !important;
+	}
+	.chat-bottom {
+		 
+		width: 100% !important;
+	}
+}
+@media (max-width: 1340px) { 
+	 
+	/*.right-area {
+		margin-bottom:3.9px !important;
+	}
+ */
+}
+
+@media (max-width: 650px) {
+/*	ul#contact-list {
+		display: flex;
+		flex-direction: column;
+		padding-inline: 6rem;
+		align-items: flex-start;
+		column-gap: 14rem;
+	}
+
+	.active-person {
+		border-radius: 20px;
+	}*/
+	/*//menü aç*/
+	/*.scontainer {
+		grid-template-areas:
+			"right-area right-area right-area right-area"
+			"right-area right-area right-area right-area"
+			"right-area right-area right-area right-area";
+	}
+
+	.left-area {
+		display: none;
+	}
+	.right-area {
+		display: block;
+	}*/
+	/*//menü kapat*/
+
+	.scontainer {
+		grid-template-areas:
+			grid-template-areas:
+			"left-area left-area left-area left-area"
+			"left-area left-area left-area left-area"
+			"left-area left-area left-area left-area" !important;
+		grid-template-columns: 11.5em 1.7fr 9fr 1fr;
+	}
+	.right-area {
+			display:none !important;
+	
+	}
+	.left-area {
+		display: flex !important;
+	}
+	#opencontact {
+		display:block !important;
+	}
+	#closecontact {
+		display: block !important;
+	}
+	
+}

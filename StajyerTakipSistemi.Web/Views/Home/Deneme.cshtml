@@ -1,0 +1,623 @@
+﻿@model StajyerTakipSistemi.Web.Models.InternDashboardViewModel
+
+
+@{
+    ViewData["Title"] = "Intern Dashboard";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+
+@section Styles {
+    <style>
+        ::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        body {
+            /* background-image: url(/yellow_3d.png);
+                    background-position: right 41% bottom 7vw;
+                    background-repeat: no-repeat;
+                    background-size: contain; */
+        }
+
+        main.pb-3 {
+            overflow: visible !important;
+        }
+
+        .main {
+            margin-left: 2rem;
+            margin-top: 2rem;
+        }
+
+        .sub-main {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .main-left, .main-right {
+            width: 50%;
+        }
+
+        .badges {
+            border-radius: 10px;
+            -webkit-box-shadow: 1px 2px 5px rgba(0,0,0,.31);
+            -moz-box-shadow: 1px 2px 5px rgba(0,0,0,.31);
+            box-shadow: 1px 2px 5px rgba(0,0,0,.31);
+        }
+
+        .profil-info, .task-container, .report-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            margin: 1rem;
+        }
+
+        .profil-info {
+            height: 115px;
+            width: 685px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .task-container {
+            height: fit-content;
+            width: 684px;
+            overflow-y: hidden;
+            overflow-x: auto;
+            background-color: transparent;
+            border-radius: 0 !important;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+        }
+
+        .task {
+            background-color: #cbd6e8;
+            min-width: 317px;
+            height: fit-content;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            margin-right: 2rem;
+            padding-inline: 1rem;
+            padding-block: 1rem;
+        }
+
+        .report-container {
+            height: 601px;
+            margin-left: auto;
+            width: 321px;
+            padding: 2rem;
+        }
+
+        .selected-files-container {
+            max-height: 300px; /* Adjust the maximum height as needed */
+            overflow-y: auto;
+            border: 1px solid #000; /* Solid border */
+        }
+
+        .selected-files {
+            /* No need for max-height or overflow-y here */
+        }
+
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 1rem;
+            font-size: smaller;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        label {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .selected-files {
+            text-align: left;
+        }
+
+        .delete-button {
+            background-color: #ff0000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-left: 10px;
+            align-self: end;
+        }
+
+        .selected-files-container {
+            max-height: 15rem !important;
+            height: 15rem;
+            width: 17rem;
+            overflow-y: auto;
+            border: 1px solid #000;
+            padding: 1rem;
+            overflow-x: hidden;
+            margin-block: 1rem;
+        }
+
+        .sub-selected-file {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            padding-block: 1rem;
+            border-bottom: dashed;
+        }
+
+        .redpink {
+            background-color: #c61f30;
+            color: #f2718a;
+        }
+
+        .blackwhite {
+            background-color: #1e1e1c !important;
+            color: #f3f3f1 !important
+        }
+
+        .pinkblack {
+            background-color: #e985a1;
+            color: #1f1513;
+        }
+
+        .whiteblack {
+            background-color: #f2edf3;
+            color: #1e1e1c;
+        }
+
+        .redpink {
+            background-color: #c61f30;
+            color: #f2718a
+        }
+
+        .date-div {
+            background-color: white;
+            border-radius: 10px;
+            width: 280px;
+            height: 142px;
+            padding-block: 3rem;
+            overflow-y: auto;
+            overflow-x: hidden;
+            text-align: center;
+            padding-inline: 3rem;
+        }
+    </style>
+}
+
+<div class="main" style="display: inline-table;">
+    <div>
+
+        <h1>Dashboard</h1>
+        <a style="text-decoration: blink;color:deeppink;" asp-controller="AbsenceInformation" asp-action="Index">Devamsızlık bilgisini görüntüle </a>
+    </div>
+
+    <div class="sub-main">
+        <div class="main-left">
+            <div class="profil-info badges">
+                <div style="display: inline-grid;">
+                    <h2>Hoşgeldin, @Model.Intern.FirstName @Model.Intern.LastName</h2><br />
+                    @*  <a style="text-decoration: blink;" asp-controller="AbsenceInformation" asp-action="Index">Devamsızlık bilgisini görüntüle_></a>
+                    <a style="text-decoration: blink;" asp-controller="DailyReport" asp-action="Index">Raporları görüntüle_></a> *@
+                </div>
+            </div>
+
+            <div style="display:flex;flex-flow:column;">
+                <div>
+                    <p style="margin-bottom:0rem;margin-left:1.5rem;color:#867f7f;font-size:13px;">Aktif görevler</p>
+                    <div class="task-container" @* onWheel="this.scrollLeft+=event.deltaY>0?100:-100" *@>
+                        @if (Model.AssignedActiveTask != null && Model.AssignedActiveTask.Count > 0)
+                        {
+                            @foreach (var task in Model.AssignedActiveTask)
+                            {
+                                <div class="task">
+                                    <h3 style="font-size: 22px;">@task.Task.Subject</h3>
+                                    <p style="margin-bottom: 0rem;">Assignment Date: @task.AssignmentDate</p>
+                                    <p style="margin-bottom: 0rem;">Due Date: @task.DueDate</p>
+                                    <a href="@Url.Content("~/TaskFiles/" + task.Task.Contents)" target="_blank">Download</a>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="task" style="width:100%;color: #842029;border-color: #f5c2c7;background-color: #f8d7da !important;margin-right: 0rem;">
+                                <p>Aktif görev bulunmamaktadır.</p>
+                            </div>
+
+                        }
+
+                    </div>
+                </div>
+                <div>
+                    <p style="margin-bottom:0rem;margin-left:1.5rem;color:#867f7f;font-size:13px;">Geçmiş görevler</p>
+                    <div class="task-container" @* onWheel="this.scrollLeft+=event.deltaY>0?100:-100" *@>
+                        @if (Model.AssignedOverdueTask != null && Model.AssignedOverdueTask.Count > 0)
+                        {
+                            @foreach (var task in Model.AssignedOverdueTask)
+                            {
+                                <div class="task">
+                                    <h3 style="font-size: 22px;">@task.Task.Subject</h3>
+                                    <p style="margin-bottom: 0rem;">Assignment Date: @task.AssignmentDate</p>
+                                    <p style="margin-bottom: 0rem;">Due Date: @task.DueDate</p>
+                                    <a href="@Url.Content("~/TaskFiles/" + task.Task.Contents)" target="_blank">Download</a>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="task" style="width:100%;color: #842029;border-color: #f5c2c7;background-color: #f8d7da !important;margin-right: 0rem;">
+                                <p>Son teslim tarihi geçmiş görev bulunmamaktadır.</p>
+                            </div>
+
+                        }
+
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+        <div class="main-right" style="display:flex;">
+            <div class="report-container badges" id="content">
+
+                Raporlar
+
+
+                @using (Html.BeginForm("UploadFiles", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "uploadForm" }))
+                {
+                    <div class="file-upload">
+                        <input type="file" name="File" id="fileInput" multiple>
+
+                        <button type="button" id="chooseFilesBtn" class="btn btn-dark" @(Model.HasReportForToday ? "disabled" : "") onclick="document.getElementById('fileInput').click();">Choose Files</button>
+                        <div class="selected-files-container">
+                            <div id="selectedFiles" class="selected-files">
+
+                                @if (Model.ExistingReportForToday != null)
+                                {
+                                    <div data-report-id="@Model.ExistingReportForToday.Id">
+                                        <span>@Model.ExistingReportForToday.FileName</span>
+                                        <button type="button" id="deleteButton" class="btn btn-danger" onclick="Sure(@Model.ExistingReportForToday.Id)" style="display:none;">Delete</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div id="buttons" style="display:flex;flex-flow:row;gap:1rem;">
+
+                            <button type="button" id="editButton" class="btn btn-dark edit-button" style="width: 120px;" @(Model.HasReportForToday ? "" : "disabled")>Edit</button>
+                            <button type="submit" id="submitButton" class="btn btn-dark submit-button" style="width: 120px;" disabled>Submit</button>
+                        </div>
+                    </div>
+                }
+
+                <script>
+
+                    function Sure(reportId) {
+                        swal({
+                            title: "Bu raporu silmek istediğinden emin misin?",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
+                        })
+                            .then((willDelete) => {
+                                if (willDelete) {
+                                    deleteReport(reportId);
+                                }
+                            });
+
+
+                    }
+
+                    function deleteReport(reportId) {
+                        $.ajax({
+                            url: '/Home/DeleteReport',
+                            type: 'POST',
+                            data: { reportId: reportId },
+                            success: function (result) {
+                                if (result.success) {
+                                    // // Task div removal
+                                    // var taskDiv = $(`div[data-report-id='${reportId}']`);
+                                    // taskDiv.remove();
+                                    // var reportDiv = $(`div[data-report-id='${reportId}']`);
+                                    // reportDiv.remove();
+                                    // // Show success message
+                                    // swal("Rapor silindi.", {
+                                    //     icon: "success",
+                                    // });
+                                    location.reload();
+
+                                } else {
+
+                                    swal("Rapor silinemedi.", {
+                                        icon: "error",
+                                    });
+                                }
+                            },
+                            error: function (error) {
+                                swal("Rapor silinemedi.", {
+                                    icon: "error",
+                                });
+                            }
+                        });
+                    }
+                </script>
+                @section scripts {
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            var fileInput = document.getElementById("fileInput");
+                            var submitButton = document.getElementById("submitButton");
+                            var editButton = document.getElementById("editButton");
+                            var chooseFilesBtn = document.getElementById("chooseFilesBtn");
+                            var deleteButton = document.getElementById("deleteButton");
+
+                            fileInput.addEventListener("change", function () {
+                                submitButton.disabled = fileInput.files.length === 0;
+                            });
+
+                            editButton.addEventListener("click", function () {
+                                if (editButton.innerText === "Edit") {
+                                    // Enter edit mode
+                                    chooseFilesBtn.disabled = false;
+                                    deleteButton.style.display = "block";
+                                    editButton.innerText = "Exit Edit Mode";
+                                } else {
+                                    // Exit edit mode
+                                    chooseFilesBtn.disabled = true;
+                                    deleteButton.style.display = "none";
+                                    editButton.innerText = "Edit";
+                                }
+                            });
+                        });
+                    </script>
+
+                }
+
+
+                <br />
+                @*  @if (TempData["Message"] != null)
+                {
+                <div class="alert @(TempData["AlertClass"])">
+                @TempData["Message"]
+                </div>
+                } *@
+                @if (TempData["Message"] != null)
+                {
+                    <div id="alertDiv" class="alert @(TempData["AlertClass"])">
+                        @TempData["Message"]
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            setTimeout(function () {
+                                var alertDiv = document.getElementById('alertDiv');
+                                alertDiv.style.display = 'none';
+                            }, 5000);
+                        });
+                    </script>
+                }
+
+            </div>
+
+            <div style="display: flex;flex-direction: column;align-items: center;margin-left: -51px;">
+                @if (Model.Reports != null && Model.Reports.Count > 0)
+                {
+                    <div><button class="scroll-up">▲</button></div>
+                    <div class="con">
+
+
+                        <div class="content" style="padding-block: 2rem;">
+
+                            @for (int i = 0; i < Model.Reports.Count; i++)
+                            {
+                                <div class="small-div " data-report-id="@Model.Reports[i].Id" style="text-align:center;color:white;-webkit-box-shadow: 1px 2px 5px rgba(0,0,0,.31);  -moz-box-shadow: 1px 2px 5px rgba(0,0,0,.31); box-shadow: 1px 2px 5px rgba(0,0,0,.31);">
+                                    <p style="font-size: 13px; font-weight: bold; margin: 15px 0;">@DateTimeOffset.FromUnixTimeSeconds(@Model.Reports[i].UnixTime).ToString("dd.MM.yyyy")</p>
+                                    <a href="@Url.Content("~/uploads/" + Model.Reports[i].FileName)" target="_blank" style="display: block;width:88px; padding: 8px 16px; align-self:center;background-color:black;color: white; text-decoration: none; border-radius: 5px; text-align: center;">Download</a>
+                                </div>
+                                @*      <div class="small-div " data-report-id="@Model.Reports[i].Id" style="text-align:center;color:white;box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);">
+                        <p style="font-size: 13px; font-weight: bold; margin: 15px 0;">@DateTimeOffset.FromUnixTimeSeconds(@Model.Reports[i].UnixTime).ToString("dd.MM.yyyy")</p>
+                        <a href="@Url.Content("~/uploads/" + Model.Reports[i].FileName)" target="_blank" style="display: block;width:88px; padding: 8px 16px; align-self:center;background-color:black;color: white; text-decoration: none; border-radius: 5px; text-align: center;">Download</a>
+                        </div>
+                        <div class="small-div " data-report-id="@Model.Reports[i].Id" style="text-align:center;color:white;box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);">
+                        <p style="font-size: 13px; font-weight: bold; margin: 15px 0;">@DateTimeOffset.FromUnixTimeSeconds(@Model.Reports[i].UnixTime).ToString("dd.MM.yyyy")</p>
+                        <a href="@Url.Content("~/uploads/" + Model.Reports[i].FileName)" target="_blank" style="display: block;width:88px; padding: 8px 16px; align-self:center;background-color:black;color: white; text-decoration: none; border-radius: 5px; text-align: center;">Download</a>
+                        </div>
+                        <div class="small-div " data-report-id="@Model.Reports[i].Id" style="text-align:center;color:white;box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);">
+                        <p style="font-size: 13px; font-weight: bold; margin: 15px 0;">@DateTimeOffset.FromUnixTimeSeconds(@Model.Reports[i].UnixTime).ToString("dd.MM.yyyy")</p>
+                        <a href="@Url.Content("~/uploads/" + Model.Reports[i].FileName)" target="_blank" style="display: block;width:88px; padding: 8px 16px; align-self:center;background-color:black;color: white; text-decoration: none; border-radius: 5px; text-align: center;">Download</a>
+                        </div>
+                        <div class="small-div " data-report-id="@Model.Reports[i].Id" style="text-align:center;color:white;box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);">
+                        <p style="font-size: 13px; font-weight: bold; margin: 15px 0;">@DateTimeOffset.FromUnixTimeSeconds(@Model.Reports[i].UnixTime).ToString("dd.MM.yyyy")</p>
+                        <a href="@Url.Content("~/uploads/" + Model.Reports[i].FileName)" target="_blank" style="display: block;width:88px; padding: 8px 16px; align-self:center;background-color:black;color: white; text-decoration: none; border-radius: 5px; text-align: center;">Download</a>
+                        </div>
+                        <div class="small-div " data-report-id="@Model.Reports[i].Id" style="text-align:center;color:white;box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);">
+                        <p style="font-size: 13px; font-weight: bold; margin: 15px 0;">@DateTimeOffset.FromUnixTimeSeconds(@Model.Reports[i].UnixTime).ToString("dd.MM.yyyy")</p>
+                        <a href="@Url.Content("~/uploads/" + Model.Reports[i].FileName)" target="_blank" style="display: block;width:88px; padding: 8px 16px; align-self:center;background-color:black;color: white; text-decoration: none; border-radius: 5px; text-align: center;">Download</a>
+                        </div>
+                        *@}
+
+
+
+
+
+                        </div>
+
+                    </div>
+                    <div><button class="scroll-down">▼</button></div>
+                }
+                else
+                {
+                    <div style="background-color:white;height: 602px;width: 189px;position: relative;top: 16px;left: 65px;border-radius: 10px;display:flex;flex-flow:column;-webkit-box-shadow: 1px 2px 5px rgba(0,0,0,.31);  -moz-box-shadow: 1px 2px 5px rgba(0,0,0,.31); box-shadow: 1px 2px 5px rgba(0,0,0,.31);">
+
+                        <span class="material-symbols-outlined" style="font-size:145px;align-self:center;margin-top:118px;margin-bottom:2rem;">priority_high</span>
+                        <p style="text-align: center;">Daha önce eklenmiş herhangi bir rapor bulunmamaktadır.</p>
+                        <button class="btn btn-dark" id="shakeButton" onclick="shake()" style="width: 156px;align-self:center;">Eklemek için tıkla</button>
+                    </div>
+
+                    <script type="text/javascript">
+
+                        function shake() {
+                            var div = document.getElementById("content");
+
+                            // Shake sınıfını ekleyerek animasyonu başlat
+                            div.classList.add("shake");
+
+                            // Belirli bir süre sonra shake sınıfını kaldırarak animasyonu durdur
+                            setTimeout(function () {
+                                div.classList.remove("shake");
+                            }, 500);
+                        }
+                    </script>
+
+                }
+
+            </div>
+
+
+
+
+
+            <style>
+                .con {
+                    width: 300px;
+                    height: 535px;
+                    overflow: hidden;
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .content {
+                    height: auto;
+                    position: absolute;
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-content: flex-start;
+                    justify-content: center;
+                    top: 0;
+                    transition: top 0.3s ease;
+                    flex-direction: column;
+                }
+
+                .small-div {
+                    width: 180px;
+                    height: 180px;
+                    font-size: 10px;
+                    border-radius: 10px;
+                    background-color: #cbd6e8;
+                    margin: 5px;
+                    display: flex;
+                    flex-direction: column;
+                    padding-block: 2rem;
+                }
+
+                .scroll-up {
+                    position: relative;
+                    z-index: 1; /* Diğer içeriklerin üzerine çıkarmak için z-index ekledik */
+                    border-radius: 50%; /* Yuvarlak butonlar */
+                    border: 0;
+                    background-color: transparent; /* Arka plan rengi */
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin: 5px;
+                }
+
+                .scroll-down {
+                    position: relative;
+                    z-index: 1; /* Diğer içeriklerin üzerine çıkarmak için z-index ekledik */
+                    border-radius: 50%; /* Yuvarlak butonlar */
+                    border: 0;
+                    background-color: transparent; /* Arka plan rengi */
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin: 5px;
+                }
+
+            </style>
+
+
+
+        </div>
+    </div>
+</div>
+
+@* <script>
+    const fileInput = document.getElementById("fileInput");
+    const selectedFiles = document.getElementById("selectedFiles");
+    let uploadedFiles = [];
+
+    fileInput.addEventListener("change", function () {
+        const files = fileInput.files;
+        if (files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileName = file.name;
+                const fileSize = (file.size / 1024).toFixed(2) + " KB";
+
+                if (!uploadedFiles.find(uploadedFile => uploadedFile.name === fileName)) {
+                    uploadedFiles.push(file);
+                    const fileItem = document.createElement("div");
+                    fileItem.classList.add("sub-selected-file");
+                    fileItem.innerHTML = `<strong style="overflow-wrap: anywhere;">${fileName}</strong> (${fileSize}) <button class="delete-button" data-index="${uploadedFiles.length - 1}">Delete</button>`;
+                    selectedFiles.appendChild(fileItem);
+                }
+            }
+        } else {
+            selectedFiles.innerHTML = "No files selected";
+        }
+
+        fileInput.value = "";
+
+        const deleteButtons = document.querySelectorAll(".delete-button");
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const index = parseInt(button.getAttribute("data-index"));
+                uploadedFiles.splice(index, 1);
+                const fileItem = button.parentElement;
+                fileItem.remove();
+            });
+        });
+    });
+</script> *@
+<script>
+    // Dosya giriş alanını dinleyin
+    const fileInput = document.getElementById("fileInput");
+    fileInput.addEventListener("change", function () {
+        const selectedFiles = fileInput.files;
+
+        // Dosya seçildiğinde burada istediğiniz işlemleri gerçekleştirebilirsiniz
+        if (selectedFiles.length > 0) {
+            // Örnek olarak, dosya adlarını ve boyutlarını görüntüleyelim
+            const fileInfoContainer = document.getElementById("selectedFiles");
+
+            fileInfoContainer.innerHTML = ""; // Önceki dosya bilgilerini temizle
+
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                const fileName = file.name;
+                const fileSize = (file.size / 1024).toFixed(2) + " KB";
+
+                // Dosya bilgilerini görüntülemek için yeni bir öğe oluşturun
+                const fileInfoItem = document.createElement("div");
+                fileInfoItem.textContent = `${fileName} (${fileSize})`;
+
+                // Dosya bilgilerini fileInfoContainer'a ekleyin
+                fileInfoContainer.appendChild(fileInfoItem);
+            }
+        }
+    });
+
+            // Dosyaları sunucuya göndermek için bir işlem eklemek için gereken kod buraya gelebilir
+</script>

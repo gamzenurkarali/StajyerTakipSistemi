@@ -1,0 +1,487 @@
+﻿@model StajyerTakipSistemi.Web.Models.ManagerDashboardViewModel
+
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+
+
+
+@section Styles {
+
+    <style>
+        .dataTables_wrapper {
+            position: relative;
+            clear: both;
+            width: -webkit-fill-available;
+        }
+
+
+         
+
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+            td.actions {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+
+
+
+            table tbody td {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+
+        div#taskTable_wrapper {
+            overflow-y: auto;
+            overflow-x: hidden;
+            background-color: white;
+            padding: 1rem;
+            border-radius: 20px;
+        }
+
+        .main-left, .main-right {
+            width: 50%;
+        }
+
+        .badges {
+            border-radius: 20px;
+            box-shadow: 1px 2px 5px rgba(0,0,0,.31);
+        }
+
+
+
+        .task-container {
+            height: 22vw;
+            overflow-y: auto;
+            background-color: transparent;
+            padding: 1rem;
+        }
+
+        .task {
+            background-color: #cbd6e8;
+            height: 7vw;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            padding: 2rem;
+            margin-right: 2rem;
+        }
+
+
+
+        .sub-main {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            height: 602px;
+            padding: 0rem;
+        }
+
+        .profil-info {
+            height: -webkit-fill-available;  
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+        }
+
+        .profil-info, .task-container, .report-container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            /* margin: 1rem; */
+        }
+
+        img {
+            align-self: end;
+            right: -7rem;
+            position: relative;
+            top: -1rem;
+            width: 21vw;
+            height: 20vw;
+        }
+
+        h2 {
+            font-size: xxx-large;
+        }
+
+        .selected-files-container {
+            max-height: 300px; 
+            overflow-y: auto;
+            border: 1px solid #000; 
+        }
+
+         
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 1rem;
+            font-size: smaller;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        label {
+            /* background-color: #3498db; */
+            color: black;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .selected-files {
+            text-align: left;
+        }
+
+        .delete-button {
+            background-color: #ff0000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-left: 10px;
+            align-self: end;
+        }
+
+        .selected-files-container {
+            max-height: 10rem !important;
+            height: 10rem;
+            width: 17rem;
+            overflow-y: auto;
+            border: 1px solid #000;
+            padding: 1rem;
+            overflow-x: hidden;
+            margin-block: 1rem;
+            width: 27rem;
+        }
+
+        .sub-selected-file {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            padding-block: 1rem;
+            border-bottom: dashed;
+        }
+
+        #dialog {
+            display: flex;
+            flex-direction: column;
+            width: 500px;
+        }
+
+        .container {
+            max-width: 1261px !important; 
+        }
+
+        #alertDiv {
+            position: fixed;  
+            top: 0;  
+            left: 50%; 
+            transform: translateX(-50%); 
+            z-index: 1000;  
+        }
+    </style>
+}
+@if (TempData["Message"] != null)
+                {
+                    <div id="alertDiv" class="alert @(TempData["AlertClass"])">
+                        @TempData["Message"]
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            setTimeout(function () {
+                                var alertDiv = document.getElementById('alertDiv');
+                                alertDiv.style.display = 'none';
+                    }, 5000);
+                        });
+                    </script>
+                }
+<div class="main">
+
+
+    <div class="container">
+        <div class="con">
+            <div class="header">
+                <div class="header__title">DASHBOARD</div> 
+            </div>
+    <div class="sub-main">
+        <div class="profil-info badges">
+            <table class="table table-responsive table-striped" id="internTable">
+
+                <thead>
+                    <tr>
+                        <th>
+                            @* @Html.DisplayNameFor(model => model.InternList.First().FirstName) *@
+                            Ad
+                        </th>
+                        <th>
+                            @* @Html.DisplayNameFor(model => model.InternList.First().LastName) *@
+                            Soyad
+                        </th>
+                        <th>
+                            
+                            Erişim Durumu
+                        </th>
+                        <th>
+                            Tarihi Geçen Görevler
+                        </th>
+                        <th>
+                            Aktif Görevler
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.InternList)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FirstName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.LastName)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AccessStatus)
+                            </td>
+                            <td>
+                                <a asp-controller="Task" asp-action="ShowOverdueTasks" asp-route-id="@item.Id">@Model.OverdueTaskCounts[item.Id]</a>
+                            </td>
+                            <td>
+
+                                <a asp-controller="Task" asp-action="ShowActiveTasks" asp-route-id="@item.Id">@Model.ActiveTaskCounts[item.Id]</a>
+                            </td>
+                                    <td class="actions">
+                                <a class="assignTaskButton btn btn-dark" data-internid="@item.Id">Görev ata</a> |
+                                <a class="btn btn-dark" asp-controller="AbsenceInformation" asp-action="Index" asp-route-id="@item.Id">Devamsızlık bilgisi</a> |
+                                <a class="btn btn-dark" asp-controller="DailyReport" asp-action="ShowReportsOfTheIntern" asp-route-guid="@item.Guid">Raporlar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <dialog id="location-modal">
+        <h3>Görev Ata</h3><br />
+        <form id="assignTaskForm" asp-controller="Home" asp-action="UploadFile" method="post" enctype="multipart/form-data">
+
+            <input type="hidden" name="internid" id="internId" />
+            <p>Görev Konusu</p>
+            <input type="text" name="taskSubject" id="taskSubject" class="form-control" required /><br/>
+            <p>Son Teslim Tarihi</p>
+            <input type="date" name="dueDate" id="dueDate" class="form-control" required /><br />
+            <script> 
+                document.getElementById('dueDate').min = new Date().toISOString().split('T')[0];
+            </script>
+            <p>Görev içeriği için dosya yükleyin..</p>
+            <div class="file-upload">
+                <input type="file" name="file" id="fileInput" required />
+                <label style="background-color:red;color:white;" for="fileInput">Choose File</label>
+                <div class="selected-files-container">
+                    <div id="selectedFiles" class="selected-files">
+                         
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button type="submit" class="submit-button clone-button">Submit</button>
+                <button class="close-modal clone-button">Kapat</button>
+            </div>
+        </form>
+        <div id="resultContainer"></div>
+    </dialog>
+
+
+</div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            new DataTable('#internTable', {
+                paging: false,
+                scrollCollapse: true,
+                scrollY: '400px'
+            });
+
+            const assignTaskButtons = document.querySelectorAll('.assignTaskButton');
+            const assignTaskButtonClicked = (e) => {
+                const internId = e.target.getAttribute('data-internid');
+                document.querySelector('#internId').value = internId;
+                locationModal.showModal();
+            };
+
+            assignTaskButtons.forEach((button) => {
+                button.addEventListener('click', assignTaskButtonClicked);
+            });
+
+
+
+            document.querySelector('.submit-button').addEventListener('click', function () {
+                document.querySelector('#assignTaskForm').submit();
+            });
+
+            
+            const assignTaskButton = document.querySelector('.assignTaskButton');
+            const internIdInput = document.querySelector('#internId');
+            assignTaskButton.addEventListener('click', function () {
+                const internId = this.getAttribute('data-internid');
+                internIdInput.value = internId;
+                locationModal.showModal();
+            });
+
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        const openModal = document.querySelector('.assignTaskButton');
+        const closeModal = document.querySelector('.close-modal');
+        const locationModal = document.getElementById('location-modal');
+
+
+
+
+        // Modal açıldığında
+        openModal.addEventListener('click', () => {
+            locationModal.showModal();
+        });
+
+        // Modal kapatıldığında
+        closeModal.addEventListener('click', () => {
+            locationModal.close();
+            clearModalContent(); // Modal içeriğini temizle
+        });
+
+        // Modal içeriğini temizleyen işlev
+        function clearModalContent() {
+            const modalInput = document.querySelector('#location-modal input[type="text"]');
+            const selectedFiles = document.querySelector('#selectedFiles');
+
+            // Input alanını temizle
+            modalInput.value = "";
+
+            // Seçilen dosyaları temizle
+            selectedFiles.innerHTML = "";
+
+            // uploadedFiles dizisini boşalt
+            uploadedFiles = [];
+        }
+    </script>
+     
+  
+    <script>
+        // Dosya giriş alanını dinle 
+        const fileInput = document.getElementById("fileInput");
+        fileInput.addEventListener("change", function () {
+            const selectedFiles = fileInput.files;
+
+            
+            if (selectedFiles.length > 0) {
+                //Dosya adlarını ve boyutlarını görüntüle
+                const fileInfoContainer = document.getElementById("selectedFiles");
+
+                fileInfoContainer.innerHTML = ""; // Önceki dosya bilgilerini temizle
+
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    const file = selectedFiles[i];
+                    const fileName = file.name;
+                    const fileSize = (file.size / 1024).toFixed(2) + " KB";
+
+                    // Dosya bilgilerini görüntülemek için yeni bir öğe oluşturun
+                    const fileInfoItem = document.createElement("div");
+                    fileInfoItem.textContent = `${fileName} (${fileSize})`;
+
+                    // Dosya bilgilerini fileInfoContainer'a ekleyin
+                    fileInfoContainer.appendChild(fileInfoItem);
+                }
+            }
+        });
+
+                 
+    </script>
+    
+}
+<style>
+    :root {
+        --text-color: rgb(107, 114, 128);
+        --title-color: rgb(55, 65, 81);
+        --button-bg-color: rgb(0, 102, 254);
+        --button-color: rgb(255, 255, 255);
+        --backdrop-color: rgba(238, 241, 247, .5);
+    }
+
+    dialog {
+        border: 0;
+        border-radius: 0;
+        padding: 20px;
+        width: 400px;
+        color: var(--text-color);
+    }
+
+    button {
+        background-color: var(--button-bg-color);
+        border: solid 2px;
+        border-radius: 0;
+        padding: 10px;
+        font-size: 16px;
+        color: var(--button-color);
+        cursor: pointer;
+        margin-bottom: 1rem;
+    }
+
+
+    dialog[open] {
+        width: 680px;
+        display: flex;
+        flex-direction: column;
+        animation: lastik .15s cubic-bezier(0, 1.8, 1, 1.8);
+        padding: 3rem;
+        overflow:hidden;
+    }
+
+
+    dialog::backdrop {
+        background: rgba(0,0,0, .5);
+    }
+
+    dialog h3 {
+        margin-bottom: 0;
+        color: var(--title-color);
+    }
+
+    dialog .actions {
+        display: flex;
+        gap: 10px;
+    }
+
+        dialog .actions button {
+            width: 100%;
+        }
+
+    .ghost-button {
+        color: var(--button-bg-color);
+        background-color: var(--button-color);
+        border: 1px solid var(--button-bg-color);
+    }
+</style>

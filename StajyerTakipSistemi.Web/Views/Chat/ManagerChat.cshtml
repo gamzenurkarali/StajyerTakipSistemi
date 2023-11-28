@@ -1,0 +1,547 @@
+﻿@model StajyerTakipSistemi.Web.Models.MessageViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.css" />
+    <link rel="stylesheet" href="~/ResponsiveManagerChat.css" />
+
+    <style>
+        body {
+            background-position: right 35% bottom 45%;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+
+        h1 {
+            margin-left: 40px;
+            margin-top: 2vw;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; 
+            font-size: calc(15px + 0.390625vw);
+            width: 99%;
+            background-color: white;
+            border-radius: 15px;
+            padding-top: 10px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: row;
+            height: 35vw;
+        }
+
+        .chat-area {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            width: 100%;
+        }
+       .left-area {
+           /*  width: 92%; */
+            padding: 10px;
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+           /*  height: 33vw; */
+        }
+        /*
+                .right-area {
+            padding-left: 1%;
+            padding-top: 2%;
+            background-color: #fff8dc;
+            margin-top: -10px; 
+            margin-bottom:1rem;
+            height: 35vw; 
+            align-self: end;
+            width: -webkit-fill-available !important;
+            overflow: auto;
+        } */
+        .sender {
+            margin-top: 1vw;
+            margin-left: 1vw;
+            color: #EDCB41;
+            display: flex;
+            justify-content: space-between;
+     
+
+        }
+
+        .messageInput {
+            width: 95%;
+            border-radius: 20px;
+            background-color: #f6f6f6;
+            border: 0;
+            margin-top: auto;
+            text-indent: 4%;
+            padding: 0.5rem;
+        }
+
+        .chat-mid {
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            margin-bottom: 1rem;
+            width: 56vw;
+            height: 342px;
+        }
+
+        .receiver-balloon {
+            width: fit-content;
+            max-width: 50%;
+            max-width: 23vw;
+            overflow-wrap: anywhere;
+            color: white;
+            background-color: #EDCB41;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            align-self: flex-start;
+            min-width: fit-content;
+        }
+
+        .sender-balloon {
+            width: fit-content;
+            max-width: 50%;
+            max-width: 23vw;
+            overflow-wrap: anywhere;
+            color: white;
+            background-color: black;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: right;
+            align-self: flex-end;
+            float: inline-end;
+            min-width: fit-content;
+        }
+
+        #dosyaYukleButton {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            width: 40px;
+            border-radius: 50%;
+            font-size: 23px;
+            font-weight: bolder;
+            text-align: center;
+            margin-left: 1%;
+        }
+
+        #dosyaYukleInput {
+            display: none;
+        }
+
+        #secilenDosya {
+            margin-top: 20px;
+        }
+
+        .chat-bottom {
+            display: flex;
+            flex-wrap: nowrap;
+            flex-direction: row;
+            width:56vw;
+        }
+        .person{
+            display:flex;
+            margin-bottom: 1rem;
+            padding:3%;
+            cursor:pointer;
+            transition: margin 0.3s ease, padding 0.3s ease, width 0.3s ease, box-shadow 0.3s ease;
+            margin-left: -24px;
+        }
+
+        .active-person {
+            background-color: white;
+            margin-left: -33px;
+            border-top-right-radius: 20px;
+            border-bottom-right-radius: 20px;
+            width: 190px;
+            box-shadow: 4px 7px 15px -3px rgba(0,0,0,0.1);
+            padding-right: 1vw;
+        }
+        li{
+            list-style:none;
+        }
+
+        .li-sender {
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            align-self: end;
+        }
+
+        .li-receiver {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            align-self: start;
+        }
+        #messagesList {
+            display: flex;
+            flex-direction: column;
+            padding-right: 1rem;
+        }
+
+        #sendButton {
+            max-height: 33px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-inline: 1%;
+        }
+
+        .emojionearea.emojionearea-inline {
+            margin-inline: 20px;
+        }
+
+        .container {
+            max-width: 1225px !important 
+        }
+    </style>
+}
+
+
+<div class="container">
+    <div class="con">
+        <div class="header">
+            <div class="header__title">Sohbet</div>
+        </div>
+@* <div class="chat-container">
+    <div class="chat-area">
+         <div class="left-area">
+                     
+            <div class="sender">
+                @if (Model.TheIntern != null)
+                    {
+                    <p>@Model.TheIntern.FirstName @Model.TheIntern.LastName</p>
+                }
+                else
+                {
+                                    
+                }
+
+            </div>
+            <div class="chat-mid" id="chatmid">
+                
+                @await Html.PartialAsync("_chatpartialview") 
+                 
+
+            </div>
+
+            
+            <div class="chat-bottom">
+                <input type="text" id="messageInput" style="width:100%;" />
+                @if (Model.LoggedInUserGuid != null)
+                {
+                    <input type="hidden" id="senderInput" style="width:100%;" value="@Model.LoggedInUserGuid.ToString()" />
+                }
+                @if (Model.TheIntern != null && Model.TheIntern.Guid != null)
+                {
+                    <input type="hidden" id="receiverInput" style="width:100%;" value="@Model.TheIntern.Guid.ToString()" />
+                }
+
+                 
+
+
+                <input type="button" id="sendButton" value="Send Message" class="btn btn-dark" />
+                
+
+            </div>
+         </div>
+
+
+
+        <div class="right-area">
+            <ul>
+                @if (Model.UsersIntern.Count > 0)
+                {
+                    @foreach (var user in Model.UsersIntern)
+                    {
+                        var newMessagesCount = Model.NewMessages
+                        .Count(m => m.Sender == user.Guid && m.Receiver == Model.LoggedInUserGuid);
+
+                        <div class="person @(user.Guid == ViewBag.SelectedUserGuid ? "active-person" : "")">
+                             <img src="~/penguin_avatar.png" style="border-radius: 50%; width: 50px; height: 50px; margin-right: 1rem; background-color: black;" />
+                            <p><strong><a style="text-decoration:none;font-size: smaller;" href='@Url.Action("getusermessage", "Chat", new { userGuid = user.Guid })' style="color: @(newMessagesCount > 0 ? "red" : "black")">@user.FirstName @user.LastName</a></strong></p>
+                        </div>
+                         
+                    }
+                }
+                else
+                {
+                    <li>No intern available</li>
+                }
+            </ul>
+        </div>
+
+
+
+
+    </div>
+</div> *@
+
+
+        <div class="scontainer">
+            <div class="left-area">
+                <div class="sender">
+                    @if (Model.TheIntern != null)
+                    {
+                        <p>@Model.TheIntern.FirstName @Model.TheIntern.LastName</p>
+                    }
+                    else
+                    {
+
+                    }
+                    <button type="button" id="opencontact" onclick="showcontact()" style="display:none;" class="btn btn-dark">
+                        <span class="material-symbols-outlined" style="color: #fff !important;">
+                            menu
+                        </span>
+                    </button>
+                    
+                </div>
+                <div class="chat-mid" id="chatmid">
+
+                    @await Html.PartialAsync("_chatpartialview")
+
+
+                </div>
+
+
+                <div class="chat-bottom">
+                    <input type="text" id="messageInput" style="width:100%;" />
+                    @if (Model.LoggedInUserGuid != null)
+                    {
+                        <input type="hidden" id="senderInput" style="width:100%;" value="@Model.LoggedInUserGuid.ToString()" />
+                    }
+                    @if (Model.TheIntern != null && Model.TheIntern.Guid != null)
+                    {
+                        <input type="hidden" id="receiverInput" style="width:100%;" value="@Model.TheIntern.Guid.ToString()" />
+                    }
+
+
+
+
+                    <input type="button" id="sendButton" value="Send Message" class="btn btn-dark" />
+
+
+                </div>
+            </div>
+            <div class="right-area">
+                <button id="closecontact" onclick="closecontact()" class="btn btn-dark" style="display:none;">
+                    <span class="material-symbols-outlined" style="color: #fff  !important;">
+                        close
+                    </span>
+                </button>
+                <ul id="contact-list" >
+                    @if (Model.UsersIntern.Count > 0)
+                    {
+                        @foreach (var user in Model.UsersIntern)
+                        {
+                            var newMessagesCount = Model.NewMessages
+                            .Count(m => m.Sender == user.Guid && m.Receiver == Model.LoggedInUserGuid);
+
+                            <div class="person @(user.Guid == ViewBag.SelectedUserGuid ? "active-person" : "")">
+                                <img src="~/penguin_avatar.png" style="border-radius: 50%; width: 50px; height: 50px; margin-right: 1rem; background-color: black;" />
+                                <p><strong><a style="text-decoration:none;font-size: smaller;" href='@Url.Action("getusermessage", "Chat", new { userGuid = user.Guid })' style="color: @(newMessagesCount > 0 ? "red" : "black")">@user.FirstName @user.LastName</a></strong></p>
+                            </div>
+                            
+                        }
+                    }
+                    else
+                    {
+                        <li>No intern available</li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <style>
+            .scontainer {
+                display: grid;
+                grid-template-columns: 11.5em 1.7fr 1fr 1fr;
+                grid-template-rows: 1fr 1fr 1fr;
+                gap: 0px 0px;
+                grid-auto-flow: row;
+                grid-template-areas:
+                    "left-area left-area left-area right-area"
+                    "left-area left-area left-area right-area"
+                    "left-area left-area left-area right-area";
+                background-color: white;
+                box-shadow: 1px 2px 5px rgba(0,0,0,.31);
+                
+                border-radius: 20px;
+                min-height:500px;
+            }
+
+            .left-area {
+                grid-area: left-area;
+                padding: 1rem;
+            }
+
+            .right-area {
+                grid-area: right-area;
+                background-color: #fff8dc;
+                padding: 1rem;
+                padding-left: 0;
+                border-bottom-right-radius: 20px;
+                border-top-right-radius: 20px;
+            }
+
+            #contact-list {
+                max-height: 500px !important;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            button#opencontact, button#closecontact {
+                background: transparent;
+                border: 0;
+            }
+        </style>
+    </div>
+</div>
+
+<script>
+            var ghostinput = document.querySelector('.chat-bottom');
+
+            if ('@ViewBag.SelectedUserGuid' === '') 
+            {
+                ghostinput.style.display = 'none';
+            } 
+            else 
+            {
+                ghostinput.style.display = 'flex';
+            }
+
+    </script>
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
+    <script>
+        $('#messageInput').emojioneArea({
+            pickerPosition: 'top'
+        }); 
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            var chatMid = document.getElementById("chatmid");
+            chatMid.scrollTop = chatMid.scrollHeight;
+        });
+    </script>
+    <script>
+        function toggleMenu() {
+            var mobileMenu = document.querySelector('.mobile-menu');
+            mobileMenu.style.display = mobileMenu.style.display === 'none' ? 'flex' : 'none';
+        }
+        // function showcontact() {
+        //     var container = document.querySelector('.scontainer');
+        //     var left = document.querySelector('.left-area');
+        //     var right = document.querySelector('.right-area');
+
+        //     container.style.cssText = 'grid-template-areas: "right-area right-area right-area right-area" "right-area right-area right-area right-area" "right-area right-area right-area right-area" !important';
+
+        //     left.style.display = "none";
+        //     right.style.display = "block";
+        // }
+        function showcontact() {
+            var container = document.querySelector('.scontainer');
+            var left = document.querySelector('.left-area');
+            var right = document.querySelector('.right-area');
+            var contactList = document.getElementById('contact-list');
+
+            function updateStyles() {
+                if (window.innerWidth <= 650) {
+                    document.styleSheets[0].insertRule(".active-person { border-radius: 20px !important; }", 0);
+                    left.style.setProperty('display', 'none', 'important');
+                    right.style.setProperty('display', 'block', 'important');
+                    container.style.setProperty('grid-template-areas', '"right-area right-area right-area right-area" ' +
+                        '"right-area right-area right-area right-area" ' +
+                        '"right-area right-area right-area right-area"', 'important');
+                    container.style.setProperty('grid-template-columns', '11.5em 1.7fr 1fr 0.4fr', 'important'); 
+                    contactList.style.cssText = "display: flex; " +
+                        "flex-direction: column; " +
+                        "padding-inline: 6rem; " +
+                        "align-items: flex-start; " +
+                        "column-gap: 14rem;";
+                } else {
+                    document.styleSheets[0].deleteRule(0);
+                    left.style.setProperty('display', 'block', 'important');
+                    right.style.setProperty('display', 'block', 'important');
+                    container.style.setProperty('grid-template-areas', ' "left-area left-area left-area right-area" ' +
+                        '"left-area left-area left-area right-area" ' +
+                        '"left-area left-area left-area right-area"', 'important');
+                    container.style.setProperty('grid-template-columns', '11.5em 1.7fr 1fr 1fr', 'important');
+                    contactList.style.cssText = " ";
+                }
+            }
+
+            // Sayfa yüklendiğinde stil güncelle
+            updateStyles();
+
+            // Window resize olayını ekle
+            window.addEventListener('resize', updateStyles);
+        }
+
+        function closecontact() {
+            var container = document.querySelector('.scontainer');
+            var left = document.querySelector('.left-area');
+            var right = document.querySelector('.right-area');
+
+            function updateStyles() {
+                if (window.innerWidth <= 650) {
+                    left.style.setProperty('display', 'block', 'important');
+                    right.style.setProperty('display', 'none', 'important');
+                    container.style.setProperty('grid-template-areas', '"left-area left-area left-area left-area" ' +
+                        '"left-area left-area left-area left-area" ' +
+                        '"left-area left-area left-area left-area"', 'important');
+                    container.style.setProperty('grid-template-columns', '11.5em 1.7fr 1fr 0.4fr', 'important');
+                } else {
+                    document.styleSheets[0].deleteRule(0);
+                    left.style.setProperty('display', 'block', 'important');
+                    right.style.setProperty('display', 'block', 'important');
+                    container.style.setProperty('grid-template-areas', ' "left-area left-area left-area right-area" ' +
+                        '"left-area left-area left-area right-area" ' +
+                        '"left-area left-area left-area right-area"', 'important');
+                    container.style.setProperty('grid-template-columns', '11.5em 1.7fr 1fr 1fr', 'important');
+                }
+            }
+
+            // Sayfa yüklendiğinde stil güncelle
+            updateStyles();
+
+            // Window resize olayını ekle
+            window.addEventListener('resize', updateStyles);
+        }
+
+
+    </script> 
+     
+}
+@* <script type="text/javascript">
+    $(document).ready(function () {
+          
+        $(document).on('keydown', function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); 
+                document.getElementById("sendButton").click();
+                emojiArea.setText('');
+            }
+        });
+
+        
+    });
+</script> *@
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/clientHub.js"></script>
+
+    
+

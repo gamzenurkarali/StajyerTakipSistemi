@@ -1,0 +1,170 @@
+﻿@model StajyerTakipSistemi.Web.Models.SIntern
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "_AdminLayout";
+}
+<style>
+    main.pb-3 {
+        overflow: visible !important;
+        font-size: smaller !important;
+         
+    }
+
+    .s-container {
+        background-color: white;
+        border-radius: 20px;
+        padding: 1rem;
+        max-height: 600px;
+        min-height: 600px;
+        height: 600px;
+    }
+
+     
+    .parent {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        grid-column-gap: 0px;
+        grid-row-gap: 0px;
+        padding: 2rem;
+    }
+
+        .parent div {
+            padding: 1rem;
+        }
+
+    .clone-button {
+        display: inline-block;
+        font-size: 1em;
+        background: #fff;
+        padding: 10px 30px;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-weight: 500;
+        margin-top: 10px;
+        color: #111;
+        letter-spacing: 2px;
+        transition: 0.2s;
+    }
+
+        .clone-button:hover {
+            letter-spacing: 6px;
+        }
+
+    .form-control { 
+        margin-bottom: -1.5rem;
+         
+    }
+
+    #alertDiv {
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+    }
+</style>
+@if (TempData["Message"] != null)
+{
+    <div id="alertDiv" class="alert @(TempData["AlertClass"])">
+        @TempData["Message"]
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                var alertDiv = document.getElementById('alertDiv');
+                alertDiv.style.display = 'none';
+            }, 5000);
+        });
+    </script>
+}
+<div class="container">
+    <div class="con">
+        <div class="header">
+            <div class="header__title">YENİ OLUŞTUR</div> 
+        </div>
+<div class="s-container">
+        <form asp-action="Create">
+        <div class="parent">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group" style="grid-area: 1 / 1 / 2 / 3;">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="grid-area: 1 / 4 / 2 / 6;">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="grid-area: 2 / 1/ 3 / 3;">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="grid-area: 2 / 4 / 3 / 6;">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="grid-area: 3 / 1 / 4 / 3;">
+                <label asp-for="BirthDate" class="control-label"></label>
+                <input asp-for="BirthDate" class="form-control" />
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="grid-area:3 / 4 / 4 / 6;">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="grid-area: 4/ 1 / 5 / 3;">
+                <label asp-for="DesiredField" class="control-label"></label>
+                <input asp-for="DesiredField" class="form-control" />
+                <span asp-validation-for="DesiredField" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="grid-area: 4 / 4 / 5 / 6;">
+                <label asp-for="Explanation" class="control-label"></label>
+                <input asp-for="Explanation" class="form-control" />
+                <span asp-validation-for="Explanation" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="grid-area: 5 / 1 / 6 / 3;">
+                <label asp-for="AccessStatus" class="control-label"></label>
+                <input asp-for="AccessStatus" class="form-control" />
+                <span asp-validation-for="AccessStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="grid-area: 5 / 4 / 6 / 6;">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+                    @* <div class="form-group" style="grid-area: 5 / 4 / 6 / 6;">
+                        <label asp-for="EndDate" class="control-label"></label>
+                        <input asp-for="EndDate" class="form-control" />
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div> *@
+            <div class="form-group" style="grid-area: 6 / 1 / 7 / 3;">
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="grid-area: 6 / 4 / 7 / 6;">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group " style="grid-area: 7 / 1 / 8 / 3;">
+
+                <input type="submit" value="Create" class="clone-button" />
+                <a class="clone-button" asp-action="Index">Back to List</a>
+            </div>
+        </div>
+        </form>
+    </div>
+
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

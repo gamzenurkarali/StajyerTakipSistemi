@@ -1,0 +1,212 @@
+﻿@model IEnumerable<StajyerTakipSistemi.Web.Models.SApplication>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout ="_AdminLayout";
+}
+<style>
+   
+    main.pb-3 {
+        overflow: visible !important;
+        font-size: smaller !important;
+         
+    }
+
+    .table-container {
+        background-color: white;
+        border-radius: 20px;
+        padding: 1rem;
+        max-height: 550px;
+        min-height: 550px;
+        height: 550px;
+    }
+
+    table {
+        width: 100%;  
+        table-layout: fixed;  
+    }
+
+    th, td {
+        text-align: left;  
+        padding: 8px; 
+        white-space: nowrap;  
+        overflow: hidden;  
+        text-overflow: ellipsis;  
+    }
+
+    td.actions {
+        display: flex;
+        flex-direction: row;
+        align-items: center; 
+    }
+    .container {
+        max-width: 1220px !important;
+    }
+     
+    table thead th {
+        text-align: left;
+    }
+
+    
+    table tbody td {
+        vertical-align: middle;  
+    }
+
+        
+        table tbody td a {
+            margin-right: 5px;    
+        }
+
+     
+    table {
+        width: 100%;  
+        table-layout: fixed;  
+    }
+
+      
+        
+
+     
+    table {
+        border-collapse: collapse;   
+    }
+
+         
+        table tbody td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+    #alertDiv {
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+    }
+</style>
+@if (TempData["Message"] != null)
+{
+    <div id="alertDiv" class="alert @(TempData["AlertClass"])">
+        @TempData["Message"]
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                var alertDiv = document.getElementById('alertDiv');
+                alertDiv.style.display = 'none';
+            }, 5000);
+        });
+    </script>
+}
+<div class="container">
+    <div class="con">
+        <div class="header">
+            <div class="header__title">BAŞVURULAR </div>
+            <p>
+                <a asp-action="Create">Yeni Oluştur</a>
+            </p>
+        </div>
+<div class="table-container">
+    <table class="table table-responsive table-striped" id="applicantTable">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </th>
+                @* <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th> *@
+                @* <th>
+                    @Html.DisplayNameFor(model => model.PhoneNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BirthDate)
+                </th> *@
+               @*  <th>
+                    @Html.DisplayNameFor(model => model.Address)
+                </th> *@
+                @* <th>
+                    @Html.DisplayNameFor(model => model.DesiredField)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Explanation)
+                </th> *@
+                <th>
+                    @Html.DisplayNameFor(model => model.ApprovalStatus)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicationDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+               @*  <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td> *@
+                @* <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BirthDate)
+                </td> *@
+             @*    <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td> *@
+                @* <td>
+                    @Html.DisplayFor(modelItem => item.DesiredField)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Explanation)
+                </td> *@
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApprovalStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApplicationDate)
+                </td>
+                <td class="actions">
+                    <a asp-action="Edit" class="btn btn-dark" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" class="btn btn-dark" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" class="btn btn-dark" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+        </div>
+    </div>
+</div>
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+            // $('#applicantTable').DataTable();
+
+            new DataTable('#applicantTable', {
+                paging: false,
+                scrollCollapse: true,
+                scrollY: '400px',
+                "zeroRecords": "Eşleşen kayıt bulunamadı",
+            });
+
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+}

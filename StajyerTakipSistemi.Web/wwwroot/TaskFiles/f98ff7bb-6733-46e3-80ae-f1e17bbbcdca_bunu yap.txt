@@ -1,0 +1,18 @@
+1100
+.scontainer {
+    display: grid;
+    grid-template-columns: 11.5em 1.7fr 1fr 0fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "left-area left-area left-area right-area"
+        "left-area left-area left-area right-area"
+        "left-area left-area left-area right-area";
+    background-color: pink;
+}
+.right-area {
+    grid-area: right-area;
+    background-color: green;
+    display: none;
+}

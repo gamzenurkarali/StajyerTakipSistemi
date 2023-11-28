@@ -1,0 +1,271 @@
+﻿@model StajyerTakipSistemi.Web.Models.SIntern
+@{
+    Layout =null;
+}
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-KD1pxuAVR2V6kH9LsmZkUVdF5sD9D9uVId3IcnGU2KkVrwQ6Tq3Blt2+qDxQSQVJz" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css" integrity="sha384-QLwDfrqu1a4I2Ymwai1rHGMB1o8x3N3b6ogJkD6BwXl4Rsw6BxM7Sk/5xj+Vo9Jzq">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js" integrity="sha384-CPnpFrd3brlJGPjn3BX5g4eEZs4T1PmYFk+LRvR/udYsGdZU5n8YfnqLH9qXMeIgZ"></script>
+
+
+ 
+
+</head>
+<body>
+    
+    
+
+    <style>
+
+        html {
+            font-family: 'Poppins';
+        }
+
+        body {
+            background-image: url('/image2vector.svg');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 333px;
+            /* border-radius: 20px; */
+            background-color: #f6f6f6;
+            border: 0;
+            margin-bottom: 1rem;
+        }
+
+        .form-container {
+            width: fit-content;
+            margin-top: 15%;
+            margin-left: 10%;
+            padding: 2%;
+        }
+
+        button {
+            width: 100%;
+            background-color: black !important;
+            color: white !important;
+            border-radius: 0 !important;
+        }
+
+            button:hover {
+                /* transform: scale(1.2); */
+            }
+
+        .link-group {
+            text-align: end;
+            margin-bottom: 1rem;
+        }
+
+        button.btn.btn-dark {
+            border-radius: 20px;
+        }
+
+        i {
+            position: absolute;
+        }
+
+        .clone-button {
+            display: inline-block;
+            font-size: 1em;
+            background: #fff;
+            padding: 10px 30px;
+            text-transform: uppercase;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 10px;
+            color: #111;
+            letter-spacing: 2px;
+            transition: 0.2s;
+        }
+
+            .clone-button:hover {
+                letter-spacing: 6px;
+            }
+    </style>
+    @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+    {
+            <div class="form-container" style="width: fit-content;">
+                <div style="text-align: center;    margin-bottom: 2rem;">
+                    <h1 style="font-weight:700;">GİRİŞ YAP</h1>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <i class="fa-regular fa-circle-user"></i>
+                        @Html.TextBoxFor(a => a.Username, new { @class = "form-control", placeholder = "Username" })
+
+
+                    </div>
+
+                    <div>
+                        <i class="fa-solid fa-eye-slash"></i>
+                         @Html.TextBoxFor(a => a.Password, new { @class = "form-control", placeholder = "Password" })
+                        <i class="fa-solid fa-eye-slash"></i>
+                    </div>
+
+
+                </div>
+                <div class="link-group">
+                <a class="open-modal" style="cursor:pointer;text-decoration-line: underline; color: deeppink;">Forgot Password</a>
+                </div>
+                <div class="button-group">
+                <button type="submit" value="Login" class="clone-button">Login</button>
+                </div>
+            @if (TempData["Message"] != null)
+            {
+                <div id="alertDiv" class="alert @(TempData["AlertClass"])">
+                    @TempData["Message"]
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        setTimeout(function () {
+                            var alertDiv = document.getElementById('alertDiv');
+                            alertDiv.style.display = 'none';
+                        }, 5000);
+                    });
+                </script>
+            }
+            </div>
+    }
+    <dialog id="location-modal">
+        @using (Html.BeginForm("CodeSend", "Home", FormMethod.Post)){
+            <p>Emailinizi giriniz...</p>
+            <input type="text" name="inputName" id="inputName" style="width:100%;text-indent: 10px;height: 43px;" />
+            <div class="actions">
+                <button type="submit" id="submitButton" class="clone-button"  >Mail Gönder</button>
+                <button type="button" class="close-modal clone-button">Kapat</button>
+                </div>
+        }
+    </dialog>
+    <script>
+        const openModal = document.querySelector('.open-modal');
+        const closeModal = document.querySelector('.close-modal');
+        const locationModal = document.getElementById('location-modal');
+
+        // Modal açıldığında
+        openModal.addEventListener('click', () => {
+            locationModal.showModal();
+        });
+
+        // Modal kapatıldığında
+        closeModal.addEventListener('click', () => {
+            locationModal.close();
+            clearModalContent(); // Modal içeriğini temizle
+        });
+
+        // Modal içeriğini temizleyen işlev
+        function clearModalContent() {
+            const modalInput = document.querySelector('#location-modal input[type="text"]');
+            const selectedFiles = document.querySelector('#selectedFiles');
+
+            // Input alanını temizle
+            modalInput.value = "";
+
+            // Seçilen dosyaları temizle
+            selectedFiles.innerHTML = "";
+
+            // uploadedFiles dizisini boşaltabilirsiniz
+            uploadedFiles = [];
+        }
+    </script>
+    <style>
+        :root {
+            --text-color: rgb(107, 114, 128);
+            --title-color: rgb(55, 65, 81);
+            --button-bg-color: rgb(0, 102, 254);
+            --button-color: rgb(255, 255, 255);
+            --backdrop-color: rgba(238, 241, 247, .5);
+        }
+
+        dialog {
+            border: 0;
+            border-radius: 30px;
+            padding: 4rem;
+            width: 400px;
+            color: var(--text-color);
+        }
+
+        button {
+            background-color: var(--button-bg-color);
+            border: 0;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            color: var(--button-color);
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        dialog button:hover {
+            /* transform: scale(1.1) !important; */
+        }
+        dialog[open] {
+            width: 680px;
+            display: flex;
+            flex-direction: column;
+            animation: lastik .15s cubic-bezier(0, 1.8, 1, 1.8);
+        }
+
+
+        dialog::backdrop {
+            background: rgba(0,0,0, .5);
+        }
+
+        dialog h3 {
+            margin-bottom: 0;
+            color: var(--title-color);
+        }
+
+        dialog .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+            dialog .actions button {
+                width: 100%;
+            }
+
+        .ghost-button {
+            color: var(--button-bg-color);
+            background-color: var(--button-color);
+            border: 1px solid var(--button-bg-color);
+        }
+    </style>
+    
+    
+    <script>
+        @if (ViewBag.EmailSent == true)
+        {
+            <text>
+                Swal.fire({
+                    title: 'Success',
+                    text: 'Email sent successfully',
+                    icon: 'success',
+                    confirmButtonText: 'Cool'
+                });
+            </text>
+        }
+        else if (ViewBag.EmailSent == false)
+        {
+            <text>
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Email could not be sent',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            </text>
+        }
+    </script>
+
+
+
+</body>
+</html>

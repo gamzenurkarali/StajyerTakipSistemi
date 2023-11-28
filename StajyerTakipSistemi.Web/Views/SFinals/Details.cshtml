@@ -1,0 +1,101 @@
+﻿@model StajyerTakipSistemi.Web.Models.SFinal
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+
+    main.pb-3 {
+        overflow: visible !important;
+        font-size: smaller !important;
+    }
+
+    .s-container {
+        background-color: white;
+        border-radius: 20px;
+        padding: 2rem;
+        max-height: 550px;
+        min-height: 550px;
+        height: 550px;
+    }
+</style>
+<div class="container">
+    <div class="con">
+        <div class="header">
+            <div class="header__title">Detaylar</div>
+
+        </div>
+        <div class="s-container">
+    <dl class="row">
+                <dt class="col-sm-2">
+                    FirstName
+                </dt>
+                <dd class="col-sm-10">
+                    @{
+                        var interns = ViewData["interns"] as List<SIntern>;
+                        var intern = interns?.FirstOrDefault(i => i.Id == Model.InternId);
+                    }
+
+                    @if (intern != null)
+                    {
+                        @intern.FirstName
+                    }
+                    else
+                    {
+                        <span>Intern bulunamadı.</span>
+                    }
+                </dd>
+                <dt class="col-sm-2">
+                    LastName
+                </dt>
+                <dd class="col-sm-10">
+                    @if (intern != null)
+                    {
+                        @intern.LastName
+                    }
+                    else
+                    {
+                        <span>Intern bulunamadı.</span>
+                    }
+                </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.RelatedDocuments)
+        </dt>
+        <dd class = "col-sm-10">
+            <a href="@Url.Content("~/FinalFiles/" + Model.RelatedDocuments)"  >İndir</a>
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.GitHubLink)
+        </dt>
+        <dd class = "col-sm-10">
+            <a href="@Html.DisplayFor(model => model.GitHubLink)" target="_blank">@Html.DisplayFor(model => model.GitHubLink)</a>
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.YouTubeLink)
+        </dt>
+        <dd class = "col-sm-10">
+            <a href="@Html.DisplayFor(model => model.YouTubeLink)" target="_blank">@Html.DisplayFor(model => model.YouTubeLink)</a>
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EvaluationStatus)
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.EvaluationStatus
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.SubmitDate)
+        </dt>
+        <dd class="col-sm-10">
+             
+            @Html.DisplayFor(model =>model.SubmitDate)
+
+        </dd>
+    </dl>
+            <div>
+                <a asp-action="Evaluate" asp-controller="Final" class="clone-button" asp-route-id="@Model?.Id">Puanla</a> |
+                <a asp-action="Index" class="clone-button">Back to List</a>
+            </div>
+</div>
+</div>
+</div></div>

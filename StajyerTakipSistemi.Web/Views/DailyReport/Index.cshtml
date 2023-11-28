@@ -1,0 +1,66 @@
+﻿@model List<StajyerTakipSistemi.Web.Models.SDailyReport>
+
+@{
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+
+<div class="container">
+    <div class="con">
+        <div class="header">
+            <div class="header__title">GEÇMİŞ RAPORLAR</div>
+            <p>@ViewBag.InternName</p>
+        </div> 
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-info">@ViewBag.Message</div>
+}
+
+<!-- The code to display the reports goes here -->
+
+<section class="cards">
+    @foreach (var report in Model)
+    {
+        <div class="card">
+            <p class="tarih">@DateTimeOffset.FromUnixTimeSeconds(report.UnixTime).ToString("dd.MM.yyyy")</p>
+            <a class="indirme-linki" href="@Url.Content("~/uploads/" + report.FileName)" target="_blank">Belgeyi Görüntüle/İndir</a>
+
+        </div>
+    }
+</section>
+    </div>
+</div>
+<style>
+     
+    /* CSS stil tanımlamalarını burada yapabilirsiniz */
+    .cards {
+        display: flex;
+        gap:4rem;
+        flex-wrap: wrap;
+        margin: 10px;
+        margin-left: 30px;
+        font-size: 20px;
+    }
+    html{
+        overflow-y:auto !important;
+    }
+    .card {
+        width: 220px;
+        background-color: white;
+        border-radius: 15px;
+        padding: 10px;
+        margin: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        height: 230px;
+        text-align: center;
+    }
+
+    .tarih {
+        margin-top: 63px;
+    }
+
+    .indirme-linki {
+        color: #eb1a79;
+        margin-top: -10px;
+        font-size: 15px;
+    }
+</style>

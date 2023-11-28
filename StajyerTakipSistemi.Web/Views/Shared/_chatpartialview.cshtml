@@ -1,0 +1,49 @@
+﻿@model StajyerTakipSistemi.Web.Models.MessageViewModel
+<style>
+
+</style>
+<ul id="messagesList">
+    @if (Model != null && Model.SelectedUserGuid != null && Model.Messages != null && Model.Messages.Any() && Model.Messagesgrouped != null)
+    {
+        <script>
+            function convertUnixTimeToDateTime(unixTime, messageTimeElement) {
+                var date = new Date(unixTime * 1000); // Unix zamanını milisaniyeye dönüştür
+                var hours = date.getHours();
+                var minutes = "0" + date.getMinutes();
+                var formattedTime = hours + ':' + minutes.substr(-2);
+                var formattedDate = date.toLocaleDateString();
+                messageTimeElement.innerText += formattedTime;
+            }
+        </script>
+
+        @foreach (var groupedMessage in Model.Messagesgrouped)
+        {
+
+            <div data-date=@groupedMessage.Date.ToString("dd/MM/yyyy") style="display:flex;align-self: center;"><span style="background: lightgray;padding-inline: 1rem;border-radius: 11px;">@groupedMessage.Date.ToString("dd/MM/yyyy")</span></div>
+                <div>
+                    <ul style="display:contents;">
+                        @foreach (var message in groupedMessage.Messages)
+                        {
+                            <li class="@(message.Sender.Equals(Model.LoggedInUserGuid) ? "li-sender" : "li-receiver")">
+                                <div class="@(message.Sender.Equals(Model.LoggedInUserGuid) ? "sender-balloon" : "receiver-balloon")">
+                                    @message.MessageText
+                                </div>
+                                <div class="message-time">
+                                    <span id="messageTime@(message.MessageId)"></span>
+                                </div>
+                                <script>
+                                    var messageTimeElement = document.getElementById("messageTime@(message.MessageId)");
+                                    convertUnixTimeToDateTime(@message.UnixTime, messageTimeElement);
+                                </script>
+                            </li>
+                        }
+                    </ul>
+                 </div>
+             
+        }
+    }
+    else
+    {
+        <p id="noMessagesAvailable">No messages available</p>
+    }
+</ul>

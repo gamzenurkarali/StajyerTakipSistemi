@@ -1,0 +1,68 @@
+﻿@model StajyerTakipSistemi.Web.Models.SInternToManager
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "_AdminLayout";
+}
+ 
+<style>
+   
+
+    main.pb-3 {
+        overflow: visible !important;
+        font-size: smaller !important; 
+    }
+
+    .s-container {
+        background-color: white;
+        border-radius: 20px;
+        padding: 1rem;
+        max-height: 500px;
+        min-height: 500px;
+        height: 500px;
+    }
+</style>
+<div class="container">
+    <div class="con">
+        <div class="header">
+            <div class="header__title">DÜZENLE</div>
+            <p>Bunu silmek istediğine emin misin?</p>
+        </div>
+    <div class="s-container">
+    <dl class="row" style="padding:2rem;">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Intern)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Intern.FirstName) @Html.DisplayFor(model => model.Intern.LastName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Manager)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Manager.FirstName) @Html.DisplayFor(model => model.Manager.LastName)
+        </dd>
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Delete" class="clone-button" style="background-color:#e9ecef;" /> |
+            <a class="clone-button" asp-action="Index">Back to List</a>
+        </form>
+    </dl>
+    @if (TempData["Message"] != null)
+    {
+        <div id="alertDiv" class="alert @(TempData["AlertClass"])">
+            @TempData["Message"]
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(function () {
+                    var alertDiv = document.getElementById('alertDiv');
+                    alertDiv.style.display = 'none';
+                }, 5000);
+            });
+        </script>
+    }
+</div>
+    </div>
+</div>
