@@ -33,22 +33,23 @@ public class BackgroundWorkerService : BackgroundService
 
                 foreach (var intern in interns)
                 {
-                    var yesterday = DateTime.UtcNow.AddDays(-1).Date; 
-                    if (yesterday.ToString("dddd")!="Cumartesi" && yesterday.ToString("dddd") != "Pazar")
+                    var yesterday = DateTime.UtcNow.AddDays(-1).Date;
+                    if (yesterday.DayOfWeek != DayOfWeek.Saturday && yesterday.DayOfWeek != DayOfWeek.Sunday)
                     {
-                        var hasReportForToday = await dbContext.SDailyReports
-                        .AnyAsync(r => r.InternId == intern.Id && DateTime.UnixEpoch.AddSeconds(r.UnixTime).Date == yesterday);
+                        var hasReportForYesterday = await dbContext.SDailyReports
+                            .AnyAsync(r => r.InternId == intern.Id && DateTime.UnixEpoch.AddSeconds(r.UnixTime).Date == yesterday);
 
-                        if (!hasReportForToday)
+                        if (!hasReportForYesterday)
                         {
-                            var hasAbsenceEntryForToday = await dbContext.SAbsenceInformations.AnyAsync(r => r.InternId == intern.Id && r.AbsenceDate == yesterday);
-                            if (!hasAbsenceEntryForToday)
+                            var hasAbsenceEntryForYesterday = await dbContext.SAbsenceInformations
+                                .AnyAsync(r => r.InternId == intern.Id && r.AbsenceDate == yesterday);
+
+                            if (!hasAbsenceEntryForYesterday)
                             {
                                 var absenceInfo = new SAbsenceInformation { InternId = intern.Id, AbsenceDate = yesterday };
                                 dbContext.SAbsenceInformations.Add(absenceInfo);
                                 await dbContext.SaveChangesAsync();
                             }
-
                         }
                     }
                     if (intern.EndDate.Date==yesterday.Date)

@@ -21,7 +21,13 @@
     
 
     <style>
-
+        :root {
+            --text-color: rgb(107, 114, 128);
+            --title-color: rgb(55, 65, 81);
+            --button-bg-color: rgb(0, 102, 254);
+            --button-color: rgb(255, 255, 255);
+            --backdrop-color: rgba(238, 241, 247, .5);
+        }
         html {
             font-family: 'Poppins';
         }
@@ -88,6 +94,63 @@
             .clone-button:hover {
                 letter-spacing: 6px;
             }
+    
+        
+
+        dialog {
+            border: 0;
+            border-radius: 30px;
+            padding: 4rem;
+            width: 400px;
+            color: var(--text-color);
+        }
+
+        button {
+            background-color: var(--button-bg-color);
+            border: 0;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            color: var(--button-color);
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        dialog button:hover {
+            /* transform: scale(1.1) !important; */
+        }
+
+        dialog[open] {
+            width: 680px;
+            display: flex;
+            flex-direction: column;
+            animation: lastik .15s cubic-bezier(0, 1.8, 1, 1.8);
+        }
+
+
+        dialog::backdrop {
+            background: rgba(0,0,0, .5);
+        }
+
+        dialog h3 {
+            margin-bottom: 0;
+            color: var(--title-color);
+        }
+
+        dialog .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+            dialog .actions button {
+                width: 100%;
+            }
+
+        .ghost-button {
+            color: var(--button-bg-color);
+            background-color: var(--button-color);
+            border: 1px solid var(--button-bg-color);
+        }
     </style>
     @using (Html.BeginForm("Login", "Home", FormMethod.Post))
     {
@@ -175,69 +238,7 @@
             uploadedFiles = [];
         }
     </script>
-    <style>
-        :root {
-            --text-color: rgb(107, 114, 128);
-            --title-color: rgb(55, 65, 81);
-            --button-bg-color: rgb(0, 102, 254);
-            --button-color: rgb(255, 255, 255);
-            --backdrop-color: rgba(238, 241, 247, .5);
-        }
-
-        dialog {
-            border: 0;
-            border-radius: 30px;
-            padding: 4rem;
-            width: 400px;
-            color: var(--text-color);
-        }
-
-        button {
-            background-color: var(--button-bg-color);
-            border: 0;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 16px;
-            color: var(--button-color);
-            cursor: pointer;
-            margin-bottom: 1rem;
-        }
-
-        dialog button:hover {
-            /* transform: scale(1.1) !important; */
-        }
-        dialog[open] {
-            width: 680px;
-            display: flex;
-            flex-direction: column;
-            animation: lastik .15s cubic-bezier(0, 1.8, 1, 1.8);
-        }
-
-
-        dialog::backdrop {
-            background: rgba(0,0,0, .5);
-        }
-
-        dialog h3 {
-            margin-bottom: 0;
-            color: var(--title-color);
-        }
-
-        dialog .actions {
-            display: flex;
-            gap: 10px;
-        }
-
-            dialog .actions button {
-                width: 100%;
-            }
-
-        .ghost-button {
-            color: var(--button-bg-color);
-            background-color: var(--button-color);
-            border: 1px solid var(--button-bg-color);
-        }
-    </style>
+   
     
     
     <script>

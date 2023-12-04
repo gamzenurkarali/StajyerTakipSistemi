@@ -360,6 +360,7 @@ body {
 .temperature {
 	grid-row: 2;
 	grid-column: 3;
+	
 }
 
 .wifi {

@@ -11,6 +11,14 @@
 @section Styles {
 
     <style>
+        :root {
+            --text-color: rgb(107, 114, 128);
+            --title-color: rgb(55, 65, 81);
+            --button-bg-color: rgb(0, 102, 254);
+            --button-color: rgb(255, 255, 255);
+            --backdrop-color: rgba(238, 241, 247, .5);
+        }
+
         .dataTables_wrapper {
             position: relative;
             clear: both;
@@ -194,6 +202,62 @@
             left: 50%; 
             transform: translateX(-50%); 
             z-index: 1000;  
+        }
+    
+        
+
+        dialog {
+            border: 0;
+            border-radius: 0;
+            padding: 20px;
+            width: 400px;
+            color: var(--text-color);
+        }
+
+        button {
+            background-color: var(--button-bg-color);
+            border: solid 2px;
+            border-radius: 0;
+            padding: 10px;
+            font-size: 16px;
+            color: var(--button-color);
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+
+        dialog[open] {
+            width: 680px;
+            display: flex;
+            flex-direction: column;
+            animation: lastik .15s cubic-bezier(0, 1.8, 1, 1.8);
+            padding: 3rem;
+            overflow: hidden;
+        }
+
+
+        dialog::backdrop {
+            background: rgba(0,0,0, .5);
+        }
+
+        dialog h3 {
+            margin-bottom: 0;
+            color: var(--title-color);
+        }
+
+        dialog .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+            dialog .actions button {
+                width: 100%;
+            }
+
+        .ghost-button {
+            color: var(--button-bg-color);
+            background-color: var(--button-color);
+            border: 1px solid var(--button-bg-color);
         }
     </style>
 }
@@ -422,66 +486,3 @@
     </script>
     
 }
-<style>
-    :root {
-        --text-color: rgb(107, 114, 128);
-        --title-color: rgb(55, 65, 81);
-        --button-bg-color: rgb(0, 102, 254);
-        --button-color: rgb(255, 255, 255);
-        --backdrop-color: rgba(238, 241, 247, .5);
-    }
-
-    dialog {
-        border: 0;
-        border-radius: 0;
-        padding: 20px;
-        width: 400px;
-        color: var(--text-color);
-    }
-
-    button {
-        background-color: var(--button-bg-color);
-        border: solid 2px;
-        border-radius: 0;
-        padding: 10px;
-        font-size: 16px;
-        color: var(--button-color);
-        cursor: pointer;
-        margin-bottom: 1rem;
-    }
-
-
-    dialog[open] {
-        width: 680px;
-        display: flex;
-        flex-direction: column;
-        animation: lastik .15s cubic-bezier(0, 1.8, 1, 1.8);
-        padding: 3rem;
-        overflow:hidden;
-    }
-
-
-    dialog::backdrop {
-        background: rgba(0,0,0, .5);
-    }
-
-    dialog h3 {
-        margin-bottom: 0;
-        color: var(--title-color);
-    }
-
-    dialog .actions {
-        display: flex;
-        gap: 10px;
-    }
-
-        dialog .actions button {
-            width: 100%;
-        }
-
-    .ghost-button {
-        color: var(--button-bg-color);
-        background-color: var(--button-color);
-        border: 1px solid var(--button-bg-color);
-    }
-</style>
