@@ -1,0 +1,8 @@
+﻿@media (max-width: 576px) nav {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-self: normal;
+	padding-inline: 12vw !important;
+	gap: 8vw !important;
+}

@@ -12,35 +12,36 @@
     <h4>SFinal</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RelatedDocuments)
+        <dt class="col-sm-2">
+            İlgili Belgeler
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.RelatedDocuments)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GitHubLink)
+        <dt class="col-sm-2">
+            GitHub Bağlantısı
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.GitHubLink)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.YouTubeLink)
+        <dt class="col-sm-2">
+            YouTube Bağlantısı
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.YouTubeLink)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EvaluationStatus)
+        <dt class="col-sm-2">
+            Değerlendirme Durumu
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.EvaluationStatus)
         </dd>
+
     </dl>
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="SİL" class="btn btn-danger" /> |
+        <a asp-action="Index">LİSTEYE DÖN</a>
     </form>
 </div>

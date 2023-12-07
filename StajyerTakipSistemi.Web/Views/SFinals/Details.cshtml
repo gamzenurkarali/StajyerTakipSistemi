@@ -29,7 +29,7 @@
         <div class="s-container">
     <dl class="row">
                 <dt class="col-sm-2">
-                    FirstName
+                    Ad
                 </dt>
                 <dd class="col-sm-10">
                     @{
@@ -47,7 +47,7 @@
                     }
                 </dd>
                 <dt class="col-sm-2">
-                    LastName
+                    Soyad
                 </dt>
                 <dd class="col-sm-10">
                     @if (intern != null)
@@ -59,42 +59,41 @@
                         <span>Intern bulunamadı.</span>
                     }
                 </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RelatedDocuments)
-        </dt>
-        <dd class = "col-sm-10">
-            <a href="@Url.Content("~/FinalFiles/" + Model.RelatedDocuments)"  >İndir</a>
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GitHubLink)
-        </dt>
-        <dd class = "col-sm-10">
-            <a href="@Html.DisplayFor(model => model.GitHubLink)" target="_blank">@Html.DisplayFor(model => model.GitHubLink)</a>
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.YouTubeLink)
-        </dt>
-        <dd class = "col-sm-10">
-            <a href="@Html.DisplayFor(model => model.YouTubeLink)" target="_blank">@Html.DisplayFor(model => model.YouTubeLink)</a>
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EvaluationStatus)
-        </dt>
-        <dd class = "col-sm-10">
-            @Model.EvaluationStatus
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.SubmitDate)
-        </dt>
-        <dd class="col-sm-10">
-             
-            @Html.DisplayFor(model =>model.SubmitDate)
+                <dt class="col-sm-2">
+                    İlgili Belgeler
+                </dt>
+                <dd class="col-sm-10">
+                    <a href="@Url.Content("~/FinalFiles/" + Model.RelatedDocuments)">İndir</a>
+                </dd>
+                <dt class="col-sm-2">
+                    GitHub Bağlantısı
+                </dt>
+                <dd class="col-sm-10">
+                    <a href="@Html.DisplayFor(model => model.GitHubLink)" target="_blank">@Html.DisplayFor(model => model.GitHubLink)</a>
+                </dd>
+                <dt class="col-sm-2">
+                    YouTube Bağlantısı
+                </dt>
+                <dd class="col-sm-10">
+                    <a href="@Html.DisplayFor(model => model.YouTubeLink)" target="_blank">@Html.DisplayFor(model => model.YouTubeLink)</a>
+                </dd>
+                <dt class="col-sm-2">
+                    Puanlanma Durumu
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.EvaluationStatus
+                </dd>
+                <dt class="col-sm-2">
+                    Gönderim Tarihi
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model =>model.SubmitDate)
+                </dd>
 
-        </dd>
     </dl>
             <div>
                 <a asp-action="Evaluate" asp-controller="Final" class="clone-button" asp-route-id="@Model?.Id">Puanla</a> |
-                <a asp-action="Index" class="clone-button">Back to List</a>
+                <a asp-action="Index" class="clone-button">LİSTEYE DÖN</a>
             </div>
 </div>
 </div>

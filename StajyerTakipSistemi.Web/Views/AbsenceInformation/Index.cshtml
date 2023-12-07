@@ -152,6 +152,7 @@
             padding: 10px;
             background-color: black;
             color: #fff;
+            height: 95px;
         }
 
         .calendar {
@@ -164,7 +165,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 65px;
+            height: 60px;
             border: 1px solid #ddd;
             cursor: pointer;
         }
@@ -286,7 +287,8 @@
                 calendarContainer.innerHTML = '';
 
                 // Önce boş hücreler ekleyelim
-                for (let i = 0; i < firstDay; i++) {
+                for (let i = (firstDay === 0 ? 6 : firstDay - 1); i > 0; i--) {
+
                     const emptyDay = document.createElement('div');
                     emptyDay.classList.add('day', 'empty');
                     calendarContainer.appendChild(emptyDay);
@@ -299,9 +301,9 @@
                     day.textContent = i;
 
                     // İşaretlenmiş günleri vurgula
-                    if (markedDates.includes(`${year}-${month + 1}-${i}`)) {
-                        day.classList.add('marked');
-                    }
+                            if (markedDates.includes(`${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`)) {
+                                day.classList.add('marked');
+                            }
 
                     // day.addEventListener('click', function () {
                     //     // Tıklanan günü işaretle veya işareti kaldır
@@ -354,8 +356,8 @@
         <div class="bordered-div">
             @foreach (var absence in Model.AbsenceInfo)
             {
-                <div class="date-abs" style="display:flex;">
-                    <span class="material-symbols-outlined" style="color:red !important;">dangerous</span>
+                        <div class="date-abs" style="display:flex;margin-bottom: 1rem;align-items: center;">
+                            <span class="material-symbols-outlined" style="color:red !important;margin-right: 1rem;">dangerous</span>
                     <p class="description">@absence.AbsenceDate</p>
                 </div>
             }

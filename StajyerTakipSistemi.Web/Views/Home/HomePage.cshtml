@@ -147,56 +147,63 @@
                         <div class="row s-container">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="FirstName" class="control-label"></label>
+                                    <label asp-for="FirstName" class="control-label" >Ad (*)</label>
                                     <input asp-for="FirstName" class="form-control" />
                                     <span asp-validation-for="FirstName" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="LastName" class="control-label"></label>
+                                    <label asp-for="LastName" class="control-label">Soyad (*)</label>
                                     <input asp-for="LastName" class="form-control" />
                                     <span asp-validation-for="LastName" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="Email" class="control-label"></label>
+                                    <label asp-for="Email" class="control-label">E-posta Adresi (*)</label>
                                     <input asp-for="Email" class="form-control" />
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="PhoneNumber" class="control-label"></label>
+                                    <label asp-for="PhoneNumber" class="control-label">Telefon Numarası (*)</label>
                                     <input asp-for="PhoneNumber" class="form-control" />
                                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="BirthDate" class="control-label"></label>
+                                    <label asp-for="BirthDate" class="control-label">Doğum Tarihi (*)</label>
                                     <input asp-for="BirthDate" class="form-control" />
                                     <span asp-validation-for="BirthDate" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="Address" class="control-label"></label>
+                                    <label asp-for="Address" class="control-label">Adres (*)</label>
                                     <input asp-for="Address" class="form-control" />
                                     <span asp-validation-for="Address" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label asp-for="DesiredField" class="control-label"></label>
-                                    <input asp-for="DesiredField" class="form-control" />
+                                    <label asp-for="DesiredField" class="control-label">İstenen Alan (*)</label>
+                                    <select asp-for="DesiredField" class="form-control">
+                                        <option value="Web Programlama">Web Programlama</option>
+                                        <option value="Mobil Uygulama">Mobil Uygulama</option>
+                                        <option value="Oyun Geliştirme">Oyun Geliştirme</option>
+                                        <option value="Siber Güvenlik">Siber Güvenlik</option>
+                                        <option value="Yapay Zeka">Yapay Zeka</option>
+                                        <option value="Sosyal Medya Yönetimi">Sosyal Medya Yönetimi</option>
+                                    </select>
                                     <span asp-validation-for="DesiredField" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label asp-for="Explanation" class="control-label"></label>
+                                    <label asp-for="Explanation" class="control-label">Açıklama (*)</label>
                                     <input asp-for="Explanation" class="form-control" />
                                     <span asp-validation-for="Explanation" class="text-danger"></span>
                                 </div>

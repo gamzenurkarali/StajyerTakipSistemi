@@ -349,7 +349,7 @@ body {
 
 .dashboard-con {
 	grid-template-columns: repeat(3, 1fr);
-	padding-block-start: 3rem;
+	padding-block-start: 2rem;
 }
 
 .weather {

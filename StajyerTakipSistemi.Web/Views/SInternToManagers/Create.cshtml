@@ -86,17 +86,17 @@
         <div class="parent">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group" style="grid-area: 1 / 1 / 2 / 3;">
-                <label asp-for="InternId" class="control-label"></label>
+                <label asp-for="InternId" class="control-label">Stajyer</label>
                 <select asp-for="InternId" class ="form-control" asp-items="ViewBag.InternId"></select>
             </div>
             <div class="form-group" style="grid-area: 1 / 4 / 2 / 6;">
-                <label asp-for="ManagerId" class="control-label"></label>
+                <label asp-for="ManagerId" class="control-label">Yetkili Kişi</label>
                 <select asp-for="ManagerId" class ="form-control" asp-items="ViewBag.ManagerId"></select>
             </div>
             <div class="form-group " style="grid-area: 2 / 1/ 3 / 3;">
 
-                <input type="submit" value="Create" class="clone-button" />
-                <a class="clone-button" asp-action="Index">Back to List</a>
+                <input type="submit" value="OLUŞTUR" class="clone-button" />
+                <a class="clone-button" asp-action="Index">LİSTEYE DÖN</a>
             </div>
         </div>
         </form>

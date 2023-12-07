@@ -67,47 +67,47 @@
 <div class=" s-container">
         <form asp-action="Edit">
         <div class="parent">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-        <div class="form-group" style="grid-area: 1 / 1 / 2 / 3;">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-        <div class="form-group" style="grid-area: 1 / 4 / 2 / 6;">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-        <div class="form-group" style="grid-area: 2 / 1/ 3 / 3;">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-        <div class="form-group" style="grid-area: 2 / 4 / 3 / 6;">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-        <div class="form-group" style="grid-area: 3 / 1 / 4 / 3;">
-                <label asp-for="Username" class="control-label"></label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-danger"></span>
-            </div>
-        <div class="form-group" style="grid-area:3 / 4 / 4 / 6;">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group" hidden>
-                <label asp-for="Guid" class="control-label"></label>
-                <input asp-for="Guid" class="form-control" />
-                <span asp-validation-for="Guid" class="text-danger"></span>
-            </div>
-        <div class="form-group" style="grid-area: 4/ 1 / 5 / 3;">
-            <input type="submit" value="Save" class="clone-button" />
-            <a class="clone-button" asp-action="Index">Back to List</a>
-            </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group" style="grid-area: 1 / 1 / 2 / 3;">
+                        <label asp-for="FirstName" class="control-label">Ad</label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="grid-area: 1 / 4 / 2 / 6;">
+                        <label asp-for="LastName" class="control-label">Soyad</label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="grid-area: 2 / 1/ 3 / 3;">
+                        <label asp-for="Email" class="control-label">E-posta Adresi</label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="grid-area: 2 / 4 / 3 / 6;">
+                        <label asp-for="PhoneNumber" class="control-label">Telefon Numarası</label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="grid-area: 3 / 1 / 4 / 3;">
+                        <label asp-for="Username" class="control-label">Kullanıcı Adı</label>
+                        <input asp-for="Username" class="form-control" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="grid-area:3 / 4 / 4 / 6;">
+                        <label asp-for="Password" class="control-label">Şifre</label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="Guid" class="control-label">Guid</label>
+                        <input asp-for="Guid" class="form-control" />
+                        <span asp-validation-for="Guid" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="grid-area: 4/ 1 / 5 / 5;">
+                         <input type="submit" value="KAYDET" class="clone-button" />
+                         <a class="clone-button" asp-action="Index">LİSTEYE DÖN</a>
+                     </div>
             </div>
         </form>
      

@@ -180,7 +180,7 @@
     <link rel="stylesheet" href="~/dashboard.css">
     }
 <div class="container">
-    <div class="dashboard-con">
+    <div class="dashboard-con" style="padding-block-start: 2rem ;">
         <div class="dashboard-header">
             <div class="dashboard-header__title">Dashboard</div>
             @{
@@ -209,7 +209,7 @@
                         <div class="file-upload">
                             <input type="file" name="File" id="fileInput" multiple>
 
-                            <button type="button" id="chooseFilesBtn" class="btn btn-dark" @(Model.HasReportForToday ? "disabled" : "") onclick="document.getElementById('fileInput').click();">Choose Files</button>
+                            <button type="button" id="chooseFilesBtn" class="btn btn-dark" @(Model.HasReportForToday ? "disabled" : "") onclick="document.getElementById('fileInput').click();">Dosya Seç</button>
                             <div class="selected-files-container">
                                 <div id="selectedFiles" class="selected-files">
 
@@ -217,15 +217,15 @@
                                     {
                                         <div style="display:flex;flex-flow:row;" data-report-id="@Model.ExistingReportForToday.Id">
                                             <span style="max-width: 415px;overflow-wrap: anywhere;overflow: overlay;">@Model.ExistingReportForToday.FileName</span>
-                                            <button type="button" id="deleteButton" class="btn btn-danger" onclick="Sure(@Model.ExistingReportForToday.Id)" style="display:none;">Delete</button>
+                                            <button type="button" id="deleteButton" class="btn btn-danger" onclick="Sure(@Model.ExistingReportForToday.Id)" style="display:none;">Sil</button>
                                         </div>
                                     }
                                 </div>
                             </div>
                             <div id="buttons" style="display:flex;flex-flow:row;gap:1rem;">
 
-                                <button type="button" id="editButton" class="btn btn-dark edit-button" style="width: 120px;" @(Model.HasReportForToday ? "" : "disabled")>Edit</button>
-                                <button type="submit" id="submitButton" class="btn btn-dark submit-button" style="width: 120px;" disabled>Submit</button>
+                                <button type="button" id="editButton" class="btn btn-dark edit-button" style="width: 120px;" @(Model.HasReportForToday ? "" : "disabled")>Düzenle</button>
+                                <button type="submit" id="submitButton" class="btn btn-dark submit-button" style="width: 120px;" disabled>Gönder</button>
                             </div>
 
                         </div>
@@ -249,7 +249,7 @@
                             });
                         </script>
                     }
-                    <a asp-action="Index" asp-controller="DailyReport" asp-route-id="@Model.Intern.Id" class="dashboard-card__link" tabindex="1" target="_blank" style="margin-top: 7px;">View in another tab<span class="fa fa-angle-right"></span></a>
+                    <a asp-action="Index" asp-controller="DailyReport" asp-route-id="@Model.Intern.Id" class="dashboard-card__link" tabindex="1" target="_blank" style="margin-top: 67px;">View in another tab<span class="fa fa-angle-right"></span></a>
                 </div>
             </div>
         </div>
@@ -311,9 +311,9 @@
                                     {
                                         <div class="task">
                                             <h3 style="font-size: 22px;">@task.Task.Subject</h3>
-                                            <p style="margin-bottom: 0rem;">Assignment Date: @task.AssignmentDate</p>
-                                            <p style="margin-bottom: 0rem;">Due Date: @task.DueDate</p>
-                                            <a href="@Url.Content("~/TaskFiles/" + task.Task.Contents)" target="_blank">Download</a>
+                                            <p style="margin-bottom: 0rem;">Görevin Atanma Tarihi: @task.AssignmentDate</p>
+                                            <p style="margin-bottom: 0rem;">Son Teslim Tarihi: @task.DueDate</p>
+                                            <a href="@Url.Content("~/TaskFiles/" + task.Task.Contents)" target="_blank">İndir</a>
                                         </div>
                                     }
                                 }
@@ -336,9 +336,9 @@
                                     {
                                         <div class="task">
                                             <h3 style="font-size: 22px;">@task.Task.Subject</h3>
-                                            <p style="margin-bottom: 0rem;">Assignment Date: @task.AssignmentDate</p>
-                                            <p style="margin-bottom: 0rem;">Due Date: @task.DueDate</p>
-                                            <a href="@Url.Content("~/TaskFiles/" + task.Task.Contents)" target="_blank">Download</a>
+                                            <p style="margin-bottom: 0rem;">Görevin Atanma Tarihi: @task.AssignmentDate</p>
+                                            <p style="margin-bottom: 0rem;">Son Teslim Tarihi: @task.DueDate</p>
+                                            <a href="@Url.Content("~/TaskFiles/" + task.Task.Contents)" target="_blank">İndir</a>
                                         </div>
                                     }
                                 }
@@ -438,7 +438,7 @@
                 const nextMonthButton = document.getElementById('nextMonth');
 
                 let currentDate = new Date();
-                var markedDates = @Html.Raw(Json.Serialize(ViewBag.MarkedDates));
+                var markedDates = @Html.Raw(Json.Serialize(ViewBag.MarkedDates)); 
 
                 function generateCalendar(year, month) {
                     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -446,7 +446,8 @@
 
                     calendarContainer.innerHTML = '';
 
-                    for (let i = 0; i < firstDay; i++) {
+                for (let i = (firstDay === 0 ? 6 : firstDay - 1); i > 0; i--) {
+
                         const emptyDay = document.createElement('div');
                         emptyDay.classList.add('day', 'empty');
                         calendarContainer.appendChild(emptyDay);
@@ -457,9 +458,10 @@
                         day.classList.add('day');
                         day.textContent = i;
 
-                        if (markedDates.includes(`${year}-${month + 1}-${i}`)) {
-                            day.classList.add('marked');
-                        }
+                    if (markedDates.includes(`${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`)) {
+                        day.classList.add('marked');
+                    }
+
 
                         calendarContainer.appendChild(day);
                     }
@@ -469,9 +471,8 @@
 
                 function getMonthName(month) {
                     const monthNames = [
-                        'January', 'February', 'March', 'April',
-                        'May', 'June', 'July', 'August',
-                        'September', 'October', 'November', 'December'
+                        "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+                        "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
                     ];
                     return monthNames[month];
                 }

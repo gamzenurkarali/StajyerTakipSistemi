@@ -116,13 +116,13 @@
     <thead>
         <tr>
             <th>
-                First Name
+                Ad
             </th>
             <th>
-                Last Name
+                Soyad
             </th>
             <th>
-                Evaluation Status
+                Puanlanma Durumu
             </th>
              
             <th></th>
@@ -158,12 +158,16 @@
                 }
             </td>
             <td>
-                @item.EvaluationStatus
+                @* @item.EvaluationStatus *@
+                @{
+                    string evaluationStatus = (item.EvaluationStatus == true) ? "Puanlandı" : "Puanlanmadı";
+                }
+                @Html.DisplayFor(modelItem => evaluationStatus)
 
             </td>
              
             <td> 
-                <a asp-action="Details" class="btn btn-dark" asp-route-id="@item.Id">Details</a>  
+                <a asp-action="Details" class="btn btn-dark" asp-route-id="@item.Id">Detay</a>  
             </td>
         </tr>
 }
@@ -179,7 +183,37 @@
             new DataTable('#finalTable', {
                 paging: false,
                 scrollCollapse: true,
-                scrollY: '400px'
+                scrollY: '400px',
+                "language": {
+                    "emptyTable": "Gösterilecek ver yok.",
+                    "processing": "Veriler yükleniyor",
+                    "sDecimal": ".",
+                    "sInfo": "_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor",
+                    "sInfoFiltered": "(_MAX_ kayıt içerisinden bulunan)",
+                    "sInfoPostFix": "",
+                    "sInfoThousands": ".",
+                    "sLengthMenu": "Sayfada _MENU_ kayıt göster",
+                    "sLoadingRecords": "Yükleniyor...",
+                    "sSearch": "Ara:",
+                    "sZeroRecords": "Eşleşen kayıt bulunamadı",
+                    "oPaginate": {
+                        "sFirst": "İlk",
+                        "sLast": "Son",
+                        "sNext": "Sonraki",
+                        "sPrevious": "Önceki"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": artan sütun sıralamasını aktifleştir",
+                        "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": "%d kayıt seçildi",
+                            "0": "",
+                            "1": "1 kayıt seçildi"
+                        }
+                    }
+                }
             });
 
         });

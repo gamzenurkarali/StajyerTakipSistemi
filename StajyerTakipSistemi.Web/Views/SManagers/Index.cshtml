@@ -120,10 +120,12 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                @* @Html.DisplayNameFor(model => model.FirstName) *@
+                Ad
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                @* @Html.DisplayNameFor(model => model.LastName) *@
+                Soyad
             </th>
            @*  <th>
                 @Html.DisplayNameFor(model => model.Email)
@@ -168,9 +170,9 @@
                 @Html.DisplayFor(modelItem => item.Guid)
             </td> *@
             <td class="actions">
-                <a asp-action="Edit" class="btn btn-dark" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" class="btn btn-dark" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" class="btn btn-dark" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" class="btn btn-dark" asp-route-id="@item.Id">Düzenle</a> |
+                <a asp-action="Details" class="btn btn-dark" asp-route-id="@item.Id">Detay</a> |
+                <a asp-action="Delete" class="btn btn-dark" asp-route-id="@item.Id">Sil</a>
             </td>
         </tr>
 }
@@ -188,7 +190,37 @@
             new DataTable('#managerTable', {
                 paging: false,
                 scrollCollapse: true,
-                scrollY: '400px'
+                scrollY: '400px',
+                "language": {
+                    "emptyTable": "Gösterilecek ver yok.",
+                    "processing": "Veriler yükleniyor",
+                    "sDecimal": ".",
+                    "sInfo": "_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor",
+                    "sInfoFiltered": "(_MAX_ kayıt içerisinden bulunan)",
+                    "sInfoPostFix": "",
+                    "sInfoThousands": ".",
+                    "sLengthMenu": "Sayfada _MENU_ kayıt göster",
+                    "sLoadingRecords": "Yükleniyor...",
+                    "sSearch": "Ara:",
+                    "sZeroRecords": "Eşleşen kayıt bulunamadı",
+                    "oPaginate": {
+                        "sFirst": "İlk",
+                        "sLast": "Son",
+                        "sNext": "Sonraki",
+                        "sPrevious": "Önceki"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": artan sütun sıralamasını aktifleştir",
+                        "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
+                    },
+                    "select": {
+                        "rows": {
+                            "_": "%d kayıt seçildi",
+                            "0": "",
+                            "1": "1 kayıt seçildi"
+                        }
+                    }
+                }
             });
 
         });

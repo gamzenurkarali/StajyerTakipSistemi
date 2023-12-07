@@ -90,52 +90,59 @@
         <div class="parent">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group" style="grid-area: 1 / 1 / 2 / 3;">
-                <label asp-for="FirstName" class="control-label"></label>
+                <label asp-for="FirstName" class="control-label">Ad</label>
                 <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group" style="grid-area: 1 / 4 / 2 / 6;">
-                <label asp-for="LastName" class="control-label"></label>
+                <label asp-for="LastName" class="control-label">Soyad</label>
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group" style="grid-area: 2 / 1/ 3 / 3;">
-                <label asp-for="Email" class="control-label"></label>
+                <label asp-for="Email" class="control-label">E-posta Adresi</label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group" style="grid-area: 2 / 4 / 3 / 6;">
-                <label asp-for="PhoneNumber" class="control-label"></label>
+                <label asp-for="PhoneNumber" class="control-label">Telefon Numarası</label>
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group" style="grid-area: 3 / 1 / 4 / 3;">
-                <label asp-for="BirthDate" class="control-label"></label>
+                <label asp-for="BirthDate" class="control-label">Doğum Tarihi</label>
                 <input asp-for="BirthDate" class="form-control" />
                 <span asp-validation-for="BirthDate" class="text-danger"></span>
             </div>
             <div class="form-group" style="grid-area:3 / 4 / 4 / 6;">
-                <label asp-for="Address" class="control-label"></label>
+                <label asp-for="Address" class="control-label">Adres</label>
                 <input asp-for="Address" class="form-control" />
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             <div class="form-group" style="grid-area: 4/ 1 / 5 / 3;">
-                <label asp-for="DesiredField" class="control-label"></label>
-                <input asp-for="DesiredField" class="form-control" />
+                <label asp-for="DesiredField" class="control-label">İstenilen Alan</label>
+                <select asp-for="DesiredField" class="form-control">
+                    <option value="Web Programlama">Web Programlama</option>
+                    <option value="Mobil Uygulama">Mobil Uygulama</option>
+                    <option value="Oyun Geliştirme">Oyun Geliştirme</option>
+                    <option value="Siber Güvenlik">Siber Güvenlik</option>
+                    <option value="Yapay Zeka">Yapay Zeka</option>
+                    <option value="Sosyal Medya Yönetimi">Sosyal Medya Yönetimi</option>
+                </select>
                 <span asp-validation-for="DesiredField" class="text-danger"></span>
             </div>
             <div class="form-group" style="grid-area: 4 / 4 / 5 / 6;">
-                <label asp-for="Explanation" class="control-label"></label>
+                <label asp-for="Explanation" class="control-label">Açıklama</label>
                 <input asp-for="Explanation" class="form-control" />
                 <span asp-validation-for="Explanation" class="text-danger"></span>
             </div>
             <div class="form-group" style="grid-area: 5 / 1 / 6 / 3;">
-                <label asp-for="AccessStatus" class="control-label"></label>
+                <label asp-for="AccessStatus" class="control-label">Erişim Durumu</label>
                 <input asp-for="AccessStatus" class="form-control" />
                 <span asp-validation-for="AccessStatus" class="text-danger"></span>
             </div>
             <div class="form-group" style="grid-area: 5 / 4 / 6 / 6;">
-                <label asp-for="StartDate" class="control-label"></label>
+                <label asp-for="StartDate" class="control-label">Staj Başlangıç Tarihi</label>
                 <input asp-for="StartDate" class="form-control" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
@@ -145,19 +152,19 @@
                         <span asp-validation-for="EndDate" class="text-danger"></span>
                     </div> *@
             <div class="form-group" style="grid-area: 6 / 1 / 7 / 3;">
-                <label asp-for="Username" class="control-label"></label>
+                <label asp-for="Username" class="control-label">Kullanıcı Adı</label>
                 <input asp-for="Username" class="form-control" />
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
             <div class="form-group" style="grid-area: 6 / 4 / 7 / 6;">
-                <label asp-for="Password" class="control-label"></label>
+                <label asp-for="Password" class="control-label">Şifre</label>
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group " style="grid-area: 7 / 1 / 8 / 3;">
 
-                <input type="submit" value="Create" class="clone-button" />
-                <a class="clone-button" asp-action="Index">Back to List</a>
+                <input type="submit" value="OLUŞTUR" class="clone-button" />
+                <a class="clone-button" asp-action="Index">LİSTEYE DÖN</a>
             </div>
         </div>
         </form>

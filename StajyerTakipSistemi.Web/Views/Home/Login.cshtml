@@ -161,24 +161,24 @@
                 <div class="form-group">
                     <div>
                         <i class="fa-regular fa-circle-user"></i>
-                        @Html.TextBoxFor(a => a.Username, new { @class = "form-control", placeholder = "Username" })
+                        @Html.TextBoxFor(a => a.Username, new { @class = "form-control", placeholder = "Kullanıcı Adı" })
 
 
                     </div>
 
                     <div>
                         <i class="fa-solid fa-eye-slash"></i>
-                         @Html.TextBoxFor(a => a.Password, new { @class = "form-control", placeholder = "Password" })
+                         @Html.TextBoxFor(a => a.Password, new { @class = "form-control", placeholder = "Parola" })
                         <i class="fa-solid fa-eye-slash"></i>
                     </div>
 
 
                 </div>
                 <div class="link-group">
-                <a class="open-modal" style="cursor:pointer;text-decoration-line: underline; color: deeppink;">Forgot Password</a>
+                <a class="open-modal" style="cursor:pointer;text-decoration-line: underline; color: deeppink;">Şifremi Unuttum!</a>
                 </div>
                 <div class="button-group">
-                <button type="submit" value="Login" class="clone-button">Login</button>
+                <button type="submit" value="Login" class="clone-button">GİRİŞ YAP</button>
                 </div>
             @if (TempData["Message"] != null)
             {
