@@ -31,6 +31,7 @@ public partial class SIntern
     public string? Username { get; set; }
 
     public string? Password { get; set; }
+    public string? Photo { get; set; }
 
     public Guid? Guid { get; set; }
 

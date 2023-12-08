@@ -24,6 +24,7 @@ public partial class SApplication
     public string? Explanation { get; set; }
 
     public string? ApprovalStatus { get; set; }
+    public string? Cv { get; set; }
 
     public DateTime? ApplicationDate { get; set; }
 }

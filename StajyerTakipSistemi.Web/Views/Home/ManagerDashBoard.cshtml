@@ -283,6 +283,7 @@
         <div class="con">
             <div class="header">
                 <div class="header__title">DASHBOARD</div> 
+                <a   class="btn btn-dark" asp-action="ManageFinals" asp-controller="SFinals" >Final Kayıtları</a>
             </div>
     <div class="sub-main">
         <div class="profil-info badges">
@@ -308,6 +309,9 @@
                         <th>
                             Aktif Görevler
                         </th>
+                        @* <th>
+                            Final kaydı gönderme durumu
+                        </th> *@
                         <th></th>
                     </tr>
                 </thead>
@@ -332,11 +336,29 @@
                             <td>
                                 <a asp-controller="Task" asp-action="ShowOverdueTasks" asp-route-id="@item.Id">@Model.OverdueTaskCounts[item.Id]</a>
                             </td>
-                            <td>
-
+                            <td> 
                                 <a asp-controller="Task" asp-action="ShowActiveTasks" asp-route-id="@item.Id">@Model.ActiveTaskCounts[item.Id]</a>
                             </td>
-                                    <td class="actions">
+                         @*    <td>
+                                        @{
+                                            var records = ViewData["Records"] as List<SFinal>;
+                                            var record = records?.FirstOrDefault(i => i.InternId == item.Id);
+                                        }
+                                        @if (item.EndDate.Date<=DateTime.Now.Date)
+                                        {
+                                            @if (record != null)
+                                            {
+                                                <a asp-controller="Details" asp-action="SFinals" asp-route-id="@item.Id">Final</a>
+                                            }
+                                            else
+                                            {
+                                            }
+                                        }
+                                        
+                                        
+                                
+                            </td> *@
+                            <td class="actions">
                                 <a class="assignTaskButton btn btn-dark" data-internid="@item.Id">Görev ata</a> |
                                 <a class="btn btn-dark" asp-controller="AbsenceInformation" asp-action="Index" asp-route-id="@item.Id">Devamsızlık bilgisi</a> |
                                 <a class="btn btn-dark" asp-controller="DailyReport" asp-action="ShowReportsOfTheIntern" asp-route-guid="@item.Guid">Raporlar</a>
@@ -371,7 +393,7 @@
             </div>
             
             <div class="actions">
-                <button type="submit" class="submit-button clone-button">Submit</button>
+                <button type="submit" class="submit-button clone-button">Gönder</button>
                 <button class="close-modal clone-button">Kapat</button>
             </div>
         </form>

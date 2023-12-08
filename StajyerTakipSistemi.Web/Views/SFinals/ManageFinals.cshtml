@@ -1,0 +1,227 @@
+﻿@model IEnumerable<StajyerTakipSistemi.Web.Models.SFinal>
+@{
+    ViewData["Title"] = "ManageFinals";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+
+    <style>
+
+
+        main.pb-3 {
+            overflow: visible !important;
+            font-size: smaller !important;
+        }
+
+
+
+        .table-container {
+            background-color: white;
+            border-radius: 20px;
+            padding: 1rem;
+            max-height: 550px;
+            min-height: 550px;
+            height: 550px;
+        }
+
+        table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+            td.actions {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+
+        .container {
+            max-width: 1220px !important;
+        }
+
+        table thead th {
+            text-align: left;
+        }
+
+
+        table tbody td {
+            vertical-align: middle;
+        }
+
+
+            table tbody td a {
+                margin-right: 5px;
+            }
+
+
+        table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+
+
+
+
+        table {
+            border-collapse: collapse;
+        }
+
+
+            table tbody td {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+        #alertDiv {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+    </style>
+    @if (TempData["Message"] != null)
+    {
+        <div id="alertDiv" class="alert @(TempData["AlertClass"])">
+            @TempData["Message"]
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(function () {
+                    var alertDiv = document.getElementById('alertDiv');
+                    alertDiv.style.display = 'none';
+                }, 5000);
+            });
+        </script>
+    }
+    <div class="container">
+        <div class="con">
+            <div class="header">
+                <div class="header__title">FİNAL KAYITLARI</div>
+
+            </div>
+            <div class="table-container">
+                <table class="table table-responsive table-striped" id="finalTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                Ad
+                            </th>
+                            <th>
+                                Soyad
+                            </th>
+                            <th>
+                                Puanlanma Durumu
+                            </th>
+
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @{
+                                        var interns = ViewData["interns"] as List<SIntern>;
+                                        var intern = interns?.FirstOrDefault(i => i.Id == item.InternId);
+                                    }
+
+                                    @if (intern != null)
+                                    {
+                                        @intern.FirstName
+                                    }
+                                    else
+                                    {
+                                        <span>Intern bulunamadı.</span>
+                                    }
+                                </td>
+                                <td>
+
+                                    @if (intern != null)
+                                    {
+                                        @intern.LastName
+                                    }
+                                    else
+                                    {
+                                        <span>Intern bulunamadı.</span>
+                                    }
+                                </td>
+                                <td>
+                                    @* @item.EvaluationStatus *@
+                                    @{
+                                        string evaluationStatus = (item.EvaluationStatus == true) ? "Puanlandı" : "Puanlanmadı";
+                                    }
+                                    @Html.DisplayFor(modelItem => evaluationStatus)
+
+                                </td>
+
+                                <td>
+                                    <a asp-action="Details" class="btn btn-dark" asp-route-id="@item.Id">Detay</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @section Scripts{
+
+        <script>
+            $(document).ready(function () {
+
+                new DataTable('#finalTable', {
+                    paging: false,
+                    scrollCollapse: true,
+                    scrollY: '400px',
+                    "language": {
+                        "emptyTable": "Gösterilecek ver yok.",
+                        "processing": "Veriler yükleniyor",
+                        "sDecimal": ".",
+                        "sInfo": "_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor",
+                        "sInfoFiltered": "(_MAX_ kayıt içerisinden bulunan)",
+                        "sInfoPostFix": "",
+                        "sInfoThousands": ".",
+                        "sLengthMenu": "Sayfada _MENU_ kayıt göster",
+                        "sLoadingRecords": "Yükleniyor...",
+                        "sSearch": "Ara:",
+                        "sZeroRecords": "Eşleşen kayıt bulunamadı",
+                        "oPaginate": {
+                            "sFirst": "İlk",
+                            "sLast": "Son",
+                            "sNext": "Sonraki",
+                            "sPrevious": "Önceki"
+                        },
+                        "oAria": {
+                            "sSortAscending": ": artan sütun sıralamasını aktifleştir",
+                            "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
+                        },
+                        "select": {
+                            "rows": {
+                                "_": "%d kayıt seçildi",
+                                "0": "",
+                                "1": "1 kayıt seçildi"
+                            }
+                        }
+                    }
+                });
+
+            });
+        </script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    }
+
+

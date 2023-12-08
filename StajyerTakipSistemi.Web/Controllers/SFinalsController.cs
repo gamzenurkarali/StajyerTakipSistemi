@@ -177,5 +177,43 @@ namespace StajyerTakipSistemi.Web.Controllers
         {
           return (_context.SFinal?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+
+        public async Task<IActionResult> ManageFinals()
+        {
+            var userId = int.Parse(HttpContext.Session.GetString("UserId"));
+
+            if (_context.SFinal == null)
+            {
+                return View(Problem("Entity set 'StajyerTakipSistemiDbContext.SFinal' is null."));
+            }
+
+            var assignedInterns = _context.SInternToManagers
+                .Where(s => s.ManagerId == userId)
+                .ToList();
+
+            var recs = new List<SFinal>();
+            var interns = new List<SIntern>();
+
+            foreach (var assignedIntern in assignedInterns)
+            {
+                var rec = _context.SFinal.FirstOrDefault(s => s.InternId == assignedIntern.InternId);
+                if (rec != null)
+                {
+                    recs.Add(rec);
+
+                    var intern = _context.SInterns.FirstOrDefault(s => s.Id == assignedIntern.InternId);
+                    if (intern != null)
+                    {
+                        interns.Add(intern);
+                    }
+                }
+            }
+
+            ViewData["interns"] = interns;
+
+            return View(recs);
+        }
+
     }
 }

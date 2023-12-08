@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\FinalFiles\" />
+    <Folder Include="wwwroot\CVs\" />
     <Folder Include="wwwroot\TaskFiles\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>

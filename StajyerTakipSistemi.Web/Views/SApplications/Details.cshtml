@@ -90,6 +90,21 @@
                 <dd class="col-sm-10">
                     @Html.DisplayFor(model => model.ApplicationDate)
                 </dd>
+                <dt class="col-sm-2">
+
+                    CV
+                </dt>
+                <dd class="col-sm-10"> 
+                    @if (Model.Cv!=null)
+                    {
+                        <a class="indirme-linki" href="@Url.Content("~/CVs/" +  Model.Cv)" target="_blank">İndir</a>
+                    }
+                    else
+                    {
+                        <p>Cv gönderilmedi.</p>
+                    }
+                    
+                </dd>
                 <div>
                     <a class="clone-button" asp-action="Edit" asp-route-id="@Model?.Id">DÜZENLE</a> |
                     <a class="clone-button" asp-action="Index">LİSTEYE DÖN</a>

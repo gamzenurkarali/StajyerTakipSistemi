@@ -55,33 +55,70 @@ namespace StajyerTakipSistemi.Web.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult ValidateApplication(SApplication model)
+        public async Task<IActionResult> ValidateApplication(SApplication model, IFormFile File)
         {
             List<string> errorMessages = new List<string>();
-            if (string.IsNullOrEmpty(model.FirstName) || string.IsNullOrEmpty(model.LastName) || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.PhoneNumber) || string.IsNullOrEmpty(model.Address) || string.IsNullOrEmpty(model.DesiredField) || string.IsNullOrEmpty(model.Explanation) || model.BirthDate == null)
+
+            if (string.IsNullOrEmpty(model.FirstName) ||
+                string.IsNullOrEmpty(model.LastName) ||
+                string.IsNullOrEmpty(model.Email) ||
+                string.IsNullOrEmpty(model.PhoneNumber) ||
+                string.IsNullOrEmpty(model.Address) ||
+                string.IsNullOrEmpty(model.DesiredField) ||
+                string.IsNullOrEmpty(model.Explanation) ||
+                model.BirthDate == null)
             {
                 errorMessages.Add("Lütfen istenen bilgileri doldurunuz.");
             }
-            if (!string.IsNullOrEmpty(model.LastName)&&!IsValidEmail(model.Email))
+
+            if (!string.IsNullOrEmpty(model.LastName) && !IsValidEmail(model.Email))
             {
                 errorMessages.Add(" Geçersiz email formatı.");
             }
+
             if (!string.IsNullOrEmpty(model.LastName) && !IsValidPhoneNumber(model.PhoneNumber))
             {
                 errorMessages.Add(" Geçersiz telefon numarası formatı.");
             }
+
             if (model.BirthDate != null && model.BirthDate == DateTime.MinValue)
             {
                 errorMessages.Add(" Geçerli bir doğum tarihi seçiniz.");
             }
+
             if (errorMessages.Count > 0)
             {
                 TempData["Message"] = string.Join(" ", errorMessages);
                 TempData["AlertClass"] = "alert-danger";
                 return View("HomePage", model);
             }
+
+            if (File != null && File.Length > 0)
+            {
+                // Dosyayı geçici bir alana kaydet
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(File.FileName);
+                var uploadsDirectory = Path.Combine(_hostingEnvironment.WebRootPath, "CVs");
+                var filePath = Path.Combine(uploadsDirectory, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await File.CopyToAsync(fileStream);
+                }
+                 
+                TempData["TempFileName"] = uniqueFileName;
+                 
+                return RedirectToAction("addApplicant", "SApplications", model);
+            }
+            else
+            {
+                TempData["Message"] = "Yüklenmiş dosya bulunamadı. Lütfen yüklemek için bir dosya seçin.";
+                TempData["AlertClass"] = "alert-warning";
+                return View("HomePage", model);
+            }
+
             return RedirectToAction("addApplicant", "SApplications", model);
         }
+
         private bool IsValidEmail(string email)
         {
             return !string.IsNullOrEmpty(email) && email.Contains("@");
@@ -556,9 +593,19 @@ namespace StajyerTakipSistemi.Web.Controllers
 
                 var overdueTaskCounts = new Dictionary<int, int>();
                 var activeTaskCounts = new Dictionary<int, int>();
+
+
+                var recs = new List<SFinal>(); 
                 foreach (var intern in internList)
                 {
-                     
+
+                    ////Final kaydı olup olmadığına bak
+                    //var rec = _context.SFinal.FirstOrDefault(s => s.InternId == intern.Id);
+                    //if (rec != null)
+                    //{
+                    //    recs.Add(rec); 
+                    //}
+                    //ViewData["Records"] = recs;
                     var assignedTasks = _context.SAssignedTasks
                         .Where(t => t.InternId == intern.Id)
                         .ToList();
@@ -578,7 +625,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                     OverdueTaskCounts = overdueTaskCounts,
                     ActiveTaskCounts = activeTaskCounts
                 };
-
+               
                 return View(viewModel);
             }
             else
@@ -985,6 +1032,85 @@ namespace StajyerTakipSistemi.Web.Controllers
                 return RedirectToAction("Error");
             }
         }
-         
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> UploadPicture(IFormFile file)
+        {
+            try
+            {
+                if (file != null && file.Length > 0)
+                {
+                   
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(file.FileName);
+                    var uploadsDirectory = Path.Combine(_hostingEnvironment.WebRootPath, "ProfilePictures");
+                    var filePath = Path.Combine(uploadsDirectory, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    byte[] fileData;
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await file.CopyToAsync(memoryStream);
+                        fileData = memoryStream.ToArray();
+                    }
+                    var intern = _context.SInterns.FirstOrDefault(s=>s.Id==int.Parse(HttpContext.Session.GetString("UserId")));
+                    intern.Photo = uniqueFileName;
+                    
+                    _context.Update(intern);
+                    await _context.SaveChangesAsync();
+                     
+                }
+                else
+                {
+                    TempData["Message"] = "Fotoğraf değiştirilemedi.";
+                    TempData["AlertClass"] = "alert-warning";
+                }
+
+                return RedirectToAction("InternDashboard");
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError("An error occurred while uploading the file: " + ex.Message);
+                return RedirectToAction("Error");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemovePhoto()
+        {
+            try
+            {
+                var defaultPhotoFileName = "DefaultPersonAvatar.png";
+                var intern = _context.SInterns.FirstOrDefault(s => s.Id == int.Parse(HttpContext.Session.GetString("UserId")));
+
+                if (intern.Photo != defaultPhotoFileName)
+                { 
+                    var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "ProfilePictures", intern.Photo);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                }
+                 
+                intern.Photo = defaultPhotoFileName;
+                _context.Update(intern);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("InternDashboard");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred while removing the photo: " + ex.Message);
+                return RedirectToAction("Error");
+            }
+        }
+
     }
 }

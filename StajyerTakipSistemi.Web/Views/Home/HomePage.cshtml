@@ -134,16 +134,18 @@
         }
     </style>
     
-    <div style="display: flex;flex-direction: column;align-items: center;flex-wrap: wrap;padding-block-start: 5rem;">
-        
-        <div style="display:flex;flex-flow:row-reverse;padding:2rem;gap:7rem;padding-inline: 4rem;">
+    <div style="display: flex;flex-direction: column; flex-wrap: wrap; ">
+        <div class="logo">
+            <img style="scale: 0.3;margin-left: -128px;" src="~/Logo.png" />
+        </div>
+        <div style="display:flex;flex-flow:row-reverse; gap:7rem;padding-inline: 4rem;">
 
-            <div style="width:700px;background-color:#2c3338;padding:2rem;color:white;" id="content">
+            <div style="width:700px;background-color:#2c3338;padding:2rem;color:white;box-shadow: rgba(240, 46, 170, 0.4) -5px 5px, rgba(240, 46, 170, 0.3) -10px 10px, rgba(240, 46, 170, 0.2) -15px 15px, rgba(240, 46, 170, 0.1) -20px 20px, rgba(240, 46, 170, 0.05) -25px 25px;" id="content">
 
            
                 <div id="Basvur" class="subcontent">
 
-                    <form asp-action="ValidateApplication" asp-controller="Home">
+                    <form asp-action="ValidateApplication" asp-controller="Home" enctype="multipart/form-data" id="uploadForm">
                         <div class="row s-container">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -200,6 +202,13 @@
                                     </select>
                                     <span asp-validation-for="DesiredField" class="text-danger"></span>
                                 </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div>
+                                    <label for="fileInput">CV Ekle (*)</label>
+                                    <input type="file" id="fileInput" name="File"  />
+                                </div>
+                                 
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -283,7 +292,30 @@
 
         </div>
     </div>
-     
+ @*    @section Scripts {
+        <script> 
+            var fileInput = document.getElementById('fileInput');
+            var uploadForm = document.getElementById('uploadForm');
+              
+
+            uploadForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var formData = new FormData(uploadForm); 
+                fetch('/YourController/UploadFiles', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Sunucudan gelen yanıtı işleme alabilirsiniz.
+                        console.log(data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        </script>
+    } *@
      
 
    
