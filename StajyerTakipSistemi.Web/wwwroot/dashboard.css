@@ -158,62 +158,7 @@ body {
 	margin: 0 1rem;
 }
 
-.weather-days__item {
-	flex: 1;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	flex-direction: column;
-}
-
-	.weather-days__item:first-child .weather-days__title {
-		font-size: 1.625rem;
-		line-height: 1;
-	}
-
-	.weather-days__item:first-child .weather-days__icon {
-		font-size: 450%;
-	}
-
-	.weather-days__item:first-child .weather-days__humidity {
-		font-size: 1rem;
-	}
-
-		.weather-days__item:first-child .weather-days__humidity:before {
-			content: 'Hum: ';
-		}
-
-
-.weather-days__humidity {
-	color: var(--color-gray-lime);
-	font-size: .75rem;
-	/*padding: .5rem;*/
-}
-
-	.weather-days__humidity:after {
-		content: 'mm';
-	}
-
-.weather-days__title {
-	color: var(--color-primary);
-	font-size: 1.25rem;
-	/*line-height: 1.5rem;*/
-	text-transform: uppercase;
-	line-height: 1.875rem;
-	flex: 0 0 2rem;
-	/*padding: .5rem;*/
-}
-
-.weather-days__icon {
-	font-size: 350%;
-	color: var(--color-secondary);
-	/*padding: .5rem;*/
-}
-
-.temperature-stats {
-	flex: 1;
-	display: flex;
-}
+ 
 
 .stats__item {
 	flex: 1;
@@ -284,68 +229,8 @@ body {
 	top: .375rem;
 	right: -.375rem;
 }
-
-.light-switches {
-	display: flex;
-	flex-wrap: wrap;
-	height: 100%;
-	margin-bottom: 2rem;
-}
-
-.switch {
-	display: flex;
-	width: 200px;
-	justify-content: space-between;
-	align-items: center;
-	flex: 1 0 50%;
-	padding: .5rem 9%;
-}
-
-.switch__name {
-	color: var(--color-text-secondary);
-	font-weight: 500;
-	font-size: 1.125rem;
-}
-
-.switch__input {
-	opacity: 0;
-}
-
-.switch__label {
-	background-color: #dcdcdc;
-	height: 1rem;
-	width: 4rem;
-	border-radius: 1rem;
-	transition: background-color .3s;
-	position: relative;
-	cursor: pointer;
-}
-
-	.switch__label:before {
-		content: '';
-		background-color: #fff;
-		border: 1px solid #e1e3e3;
-		border-radius: 50%;
-		width: 1.75rem;
-		height: 1.75rem;
-		top: -0.375rem;
-		left: 0;
-		position: absolute;
-		transition: left .3s;
-		box-shadow: 0 0 2px 0 rgba(220,220,220,.75);
-	}
-
-.switch__input:focus ~ .switch__label {
-	outline: var(--color-focus) auto 10px;
-}
-
-.switch__input:checked ~ .switch__label {
-	background-color: #65b6d5;
-}
-
-	.switch__input:checked ~ .switch__label:before {
-		left: 2.25rem;
-	}
+ 
+ 
 
 .dashboard-con {
 	grid-template-columns: repeat(3, 1fr);
@@ -378,10 +263,7 @@ body {
 	grid-column: 2/4;
 }
 
-.power {
-	grid-row: 5;
-	grid-column: 1/4;
-}
+ 
 
 @media (max-width: 992px) {
 	.dashboard-con {
@@ -418,14 +300,8 @@ body {
 		grid-column: 1/3;
 	}
 
-	.power {
-		grid-row: 6;
-		grid-column: 1/3;
-	}
-
-	.light-switches:last-child {
-		margin-bottom: 1rem;
-	}
+	 
+	 
 }
 
 @media (max-width: 576px) {
@@ -466,21 +342,5 @@ body {
 		grid-column: 1;
 	}
 
-	
-
-	.switch_order-1 {
-		order: 1;
-	}
-
-	.switch_order-2 {
-		order: 2;
-	}
-
-	.switch {
-		flex: 1 0 100%;
-	}
-
-	.switch__label {
-		margin-right: 0;
-	}
+	 
 }

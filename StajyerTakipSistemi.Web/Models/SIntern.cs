@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace StajyerTakipSistemi.Web.Models;
 
@@ -15,7 +16,10 @@ public partial class SIntern
 
     public string? PhoneNumber { get; set; }
 
-    public DateTime? BirthDate { get; set; }
+    [Required(ErrorMessage = "Doğum Tarihi zorunludur.")]
+    [DataType(DataType.Date)]
+    public DateTime BirthDate { get; set; }
+    //public DateTime? BirthDate { get; set; }
 
     public string? Address { get; set; }
 
@@ -25,7 +29,10 @@ public partial class SIntern
 
     public string? AccessStatus { get; set; }
 
+    [DataType(DataType.Date)]
     public DateTime StartDate { get; set; }
+
+    [DataType(DataType.Date)]
     public DateTime EndDate { get; set; }
 
     public string? Username { get; set; }

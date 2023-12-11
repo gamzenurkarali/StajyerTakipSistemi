@@ -199,6 +199,8 @@
     }
     <dialog id="location-modal">
         @using (Html.BeginForm("CodeSend", "Home", FormMethod.Post)){
+            <p>Kullanıcı Adı</p>
+            <input type="text" name="inputUserName" id="inputUserName" style="width:100%;text-indent: 10px;height: 43px;" />
             <p>Emailinizi giriniz...</p>
             <input type="text" name="inputName" id="inputName" style="width:100%;text-indent: 10px;height: 43px;" />
             <div class="actions">

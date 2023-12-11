@@ -97,12 +97,11 @@ namespace StajyerTakipSistemi.Web.Controllers
             {
                 if (_context.SInternToManagers.Any(s => s.InternId == sInternToManager.InternId))
                 {
-                     
-                    TempData["Message"] = "Bu stajyer zaten bir yetkili ile eşleştirilmiş.";
-                    TempData["AlertClass"] = "alert-danger";
 
                     ViewBag.InternId = new SelectList(internList, "Id", "FullName");
                     ViewBag.ManagerId = new SelectList(managerList, "Id", "FullName");
+                    TempData["Message"] = "Bu stajyer zaten bir yetkili ile eşleştirilmiş.";
+                    TempData["AlertClass"] = "alert-danger";
                     return View(sInternToManager);
                 }
 
@@ -112,7 +111,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                 TempData["AlertClass"] = "alert-success";
                 ViewBag.InternId = new SelectList(internList, "Id", "FullName");
                 ViewBag.ManagerId = new SelectList(managerList, "Id", "FullName");
-                return View(sInternToManager);
+                return RedirectToAction(nameof(Index));
             }
             ViewBag.InternId = new SelectList(internList, "Id", "FullName");
             ViewBag.ManagerId = new SelectList(managerList, "Id", "FullName");
@@ -128,6 +127,7 @@ namespace StajyerTakipSistemi.Web.Controllers
             }
 
             var sInternToManager = await _context.SInternToManagers.FindAsync(id);
+
             if (sInternToManager == null)
             {
                 return NotFound();
@@ -149,6 +149,9 @@ namespace StajyerTakipSistemi.Web.Controllers
             ViewBag.InternId = new SelectList(internList, "Id", "FullName", sInternToManager.InternId);
             ViewBag.ManagerId = new SelectList(managerList, "Id", "FullName", sInternToManager.ManagerId);
 
+
+            //var intern = _context.SInterns.FirstOrDefault(s=>s.Id==sInternToManager.InternId);
+            //ViewBag.Intern = intern;
             return View(sInternToManager);
         }
 
@@ -182,7 +185,8 @@ namespace StajyerTakipSistemi.Web.Controllers
                     if (_context.SInternToManagers.Any(s => s.InternId == sInternToManager.InternId && s.ManagerId==sInternToManager.ManagerId))
                     {
                         TempData["Message"] = "Bu stajyer ve yetkili zaten eşleştirilmiş.";
-                        TempData["AlertClass"] = "alert-danger"; 
+                        TempData["AlertClass"] = "alert-danger";
+                        ViewBag.InternId = new SelectList(internList, "Id", "FullName", sInternToManager.InternId);
                         ViewBag.ManagerId = new SelectList(managerList, "Id", "FullName", sInternToManager.ManagerId);
 
                         return View();
@@ -194,7 +198,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                     ViewBag.InternId = new SelectList(internList, "Id", "FullName", sInternToManager.InternId);
                     ViewBag.ManagerId = new SelectList(managerList, "Id", "FullName", sInternToManager.ManagerId);
 
-                    return View();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -207,8 +211,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                         throw;
                     }
                 }
-
-                return View();
+                 
             }
             ViewBag.InternId = new SelectList(internList, "Id", "FullName", sInternToManager.InternId);
             ViewBag.ManagerId = new SelectList(managerList, "Id", "FullName", sInternToManager.ManagerId);

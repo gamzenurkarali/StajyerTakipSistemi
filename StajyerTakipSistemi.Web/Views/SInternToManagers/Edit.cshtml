@@ -61,22 +61,23 @@
         z-index: 1000;
     }
 </style>
-@if (TempData["Message"] != null)
-{
-    <div id="alertDiv" class="alert @(TempData["AlertClass"])">
-        @TempData["Message"]
-    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            setTimeout(function () {
-                var alertDiv = document.getElementById('alertDiv');
-                alertDiv.style.display = 'none';
-            }, 5000);
-        });
-    </script>
-}
 <div class="container">
+    @if (TempData["Message"] != null)
+    {
+        <div id="alertDiv" class="alert @(TempData["AlertClass"])">
+            @TempData["Message"]
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(function () {
+                    var alertDiv = document.getElementById('alertDiv');
+                    alertDiv.style.display = 'none';
+                }, 5000);
+            });
+        </script>
+    }
     <div class="con">
         <div class="header">
             <div class="header__title">DÜZENLE</div> 
@@ -87,9 +88,12 @@
     <form asp-action="Edit">
         <div class="parent">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+
             <div class="form-group" style="grid-area: 1 / 1 / 2 / 3;">
                 <label asp-for="InternId" class="control-label">Stajyer</label>
-                <select asp-for="InternId" class="form-control" asp-items="ViewBag.InternId"></select>
+                <select disabled asp-for="InternId" class="form-control" asp-items="ViewBag.InternId" value=""></select>
+                        <input type="hidden" asp-for="InternId" />
             </div>
             <div class="form-group" style="grid-area: 1 / 4 / 2 / 6;">
                 <label asp-for="ManagerId" class="control-label">Yetkili Kişi</label>

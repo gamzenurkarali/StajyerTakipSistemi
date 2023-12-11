@@ -89,12 +89,12 @@
                         <input asp-for="PhoneNumber" class="form-control" />
                         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
-                    <div class="form-group" style="grid-area: 3 / 1 / 4 / 3;">
+                    <div class="form-group" style="grid-area: 3 / 1 / 4 / 3;" hidden>
                         <label asp-for="Username" class="control-label">Kullanıcı Adı</label>
                         <input asp-for="Username" class="form-control" />
                         <span asp-validation-for="Username" class="text-danger"></span>
                     </div>
-                    <div class="form-group" style="grid-area:3 / 4 / 4 / 6;">
+                    <div class="form-group" style="grid-area:3 / 4 / 4 / 6;" hidden>
                         <label asp-for="Password" class="control-label">Şifre</label>
                         <input asp-for="Password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
@@ -104,7 +104,7 @@
                         <input asp-for="Guid" class="form-control" />
                         <span asp-validation-for="Guid" class="text-danger"></span>
                     </div>
-                    <div class="form-group" style="grid-area: 4/ 1 / 5 / 5;">
+                    <div class="form-group" style="grid-area: 3/ 1 / 4 / 3;">
                          <input type="submit" value="KAYDET" class="clone-button" />
                          <a class="clone-button" asp-action="Index">LİSTEYE DÖN</a>
                      </div>

@@ -143,6 +143,12 @@ namespace StajyerTakipSistemi.Web.Controllers
             }
             if (ModelState.IsValid)
             {
+
+                
+
+
+
+
                 var internUser = _context.SInterns
                 .Where(a => a.Username.Equals(objUser.Username))
                 .FirstOrDefault();
@@ -155,9 +161,9 @@ namespace StajyerTakipSistemi.Web.Controllers
                         TempData["AlertClass"] = "alert-danger";
                         return View();
 
-                    }
+                    } 
                     var isThisPassword = _context.SInterns
-                    .Where(a => a.Username.Equals(objUser.Username) && a.Password.Equals(objUser.Password))
+                    .Where(a => a.Username.Equals(objUser.Username) && a.Password.Equals(PasswordHasher.HashPassword(objUser.Password)))
                     .FirstOrDefault();
                     if (isThisPassword!=null)
                     {
@@ -191,7 +197,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                 if (managerUser != null)
                 {
                     var isThisPassword = _context.SManagers
-                    .Where(a => a.Username.Equals(objUser.Username) && a.Password.Equals(objUser.Password))
+                    .Where(a => a.Username.Equals(objUser.Username) && a.Password.Equals(PasswordHasher.HashPassword(objUser.Password)))
                     .FirstOrDefault();
                     if (isThisPassword != null)
                     {
@@ -219,14 +225,15 @@ namespace StajyerTakipSistemi.Web.Controllers
                  if (adminUser != null)
                 {
                     var isThisPassword = _context.admin
-                    .Where(a => a.Username.Equals(objUser.Username) && a.Password.Equals(objUser.Password))
+                    .Where(a => a.Username.Equals(objUser.Username) && a.Password.Equals(PasswordHasher.HashPassword(objUser.Password)))
                     .FirstOrDefault();
                     if (isThisPassword != null)
                     {
                         HttpContext.Session.SetString("UserId", adminUser.Id.ToString());
                         HttpContext.Session.SetString("Username", adminUser.Username);
-
-                        return RedirectToAction("DashBoard");
+                        HttpContext.Session.SetString("Guid", adminUser.Guid.ToString());
+                        HttpContext.Session.SetString("Email", adminUser.Email);
+                        return RedirectToAction("Index", "SApplications");
                     }
                     else
                     {
@@ -249,19 +256,28 @@ namespace StajyerTakipSistemi.Web.Controllers
             return View(objUser);
         }
 
-        public IActionResult Dashboard( )
+        public IActionResult Dashboard()
         {
-            if (HttpContext.Session.GetString("Username").StartsWith("G"))
+            var managerUser = _context.SManagers
+                    .Where(a => a.Guid.Equals(Guid.Parse(HttpContext.Session.GetString("Guid"))))
+                    .FirstOrDefault();
+            var internUser = _context.SInterns
+                    .Where(a => a.Guid.Equals(Guid.Parse(HttpContext.Session.GetString("Guid"))))
+                    .FirstOrDefault();
+            var adminUser = _context.admin
+                    .Where(a => a.Guid.Equals(Guid.Parse(HttpContext.Session.GetString("Guid"))) )
+                    .FirstOrDefault();
+            if (internUser != null)
             {
                
                 return RedirectToAction("InternDashboard", "Home");
             }
-            else if (HttpContext.Session.GetString("Username").StartsWith("M"))
+            else if (managerUser != null)
             {
                 
                 return RedirectToAction("ManagerDashboard", "Home");
             }
-            else if (HttpContext.Session.GetString("Username").StartsWith("a"))
+            else if (adminUser != null)
             {
 
                 return RedirectToAction("Index", "SApplications");
@@ -611,7 +627,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                         .ToList();
 
                      
-                    var overdueTaskCount = assignedTasks.Count(t => t.DueDate.HasValue && t.DueDate < DateTime.Now);
+                    var overdueTaskCount = assignedTasks.Count(t => t.DueDate.HasValue && t.DueDate < DateTime.Now.Date);
                     var activeTaskCount = assignedTasks.Count(t => t.DueDate.HasValue && t.DueDate >= DateTime.Now.Date);
                      
                     overdueTaskCounts.Add(intern.Id, overdueTaskCount);
@@ -709,10 +725,17 @@ namespace StajyerTakipSistemi.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult CodeSend(string inputName)
+        public IActionResult CodeSend(string inputName,string inputUserName)
         {
-            var intern = _context.SInterns.FirstOrDefault(s => s.Email == inputName);
-            var manager = _context.SManagers.FirstOrDefault(s => s.Email == inputName);
+            if (inputName == null || inputUserName == null)
+            {
+                TempData["Message"] = "İstenen bilgileri doldurunuz.";
+                TempData["AlertClass"] = "alert-danger";
+                return RedirectToAction("Login");
+            }
+            var intern = _context.SInterns.FirstOrDefault(s => s.Email == inputName && s.Username== inputUserName);
+            var manager = _context.SManagers.FirstOrDefault(s => s.Email == inputName && s.Username == inputUserName);
+            var Admin = _context.admin.FirstOrDefault(s => s.Email == inputName && s.Username == inputUserName);
             string guid = string.Empty;
 
             if (intern != null)
@@ -723,9 +746,13 @@ namespace StajyerTakipSistemi.Web.Controllers
             {
                 guid = manager.Guid.ToString();
             }
+            else if (Admin != null)
+            {
+                guid = Admin.Guid.ToString();
+            }
             else
             {
-                TempData["Message"] = "User not found or email could not be sent.";
+                TempData["Message"] = "Kullanıcı bulunamadı veya email gönderilemedi.";
                 TempData["AlertClass"] = "alert-danger";
             }
             if (!string.IsNullOrEmpty(guid))
@@ -744,8 +771,8 @@ namespace StajyerTakipSistemi.Web.Controllers
                 
                 var from = "stajyertakip@gmail.com";
                 var to = inputName;
-                var subject = "Reset your password 👾";
-                var content = $"Please click the following link to reset your password: https://localhost:44373/Home/ChangePassword?token={token}";
+                var subject = "Şifreni Sıfırla 👾";
+                var content = $"Şifreni sıfırlamak için bu linke tıkla: https://localhost:44373/Home/ChangePassword?token={token}";
 
                 // E-posta gönderme işlemi
                 bool emailSent = SendEmail(from, to, subject, content);
@@ -753,13 +780,13 @@ namespace StajyerTakipSistemi.Web.Controllers
                 if (emailSent)
                 {
                     ViewBag.EmailSent = true;
-                    TempData["Message"] = "Email sent successfully.";
+                    TempData["Message"] = "Email başarıyla gönderildi..";
                     TempData["AlertClass"] = "alert-success";
                 }
                 else
                 {
                     ViewBag.EmailSent = false;
-                    TempData["Message"] = "User not found or email could not be sent.";
+                    TempData["Message"] = "Kullanıcı bulunamadı veya email gönderilemedi.";
                     TempData["AlertClass"] = "alert-danger";
 
                 }
@@ -767,7 +794,7 @@ namespace StajyerTakipSistemi.Web.Controllers
             else
             {
                 ViewBag.EmailSent = false;
-                TempData["Message"] = "User not found or email could not be sent.";
+                TempData["Message"] = "Kullanıcı bulunamadı veya email gönderilemedi.";
                 TempData["AlertClass"] = "alert-danger";
 
             }
@@ -788,6 +815,7 @@ namespace StajyerTakipSistemi.Web.Controllers
             if (tokenData != null && tokenData.ExpirationTime > DateTime.UtcNow)
             {
                 ViewBag.Guid = tokenData.Guid;
+                ViewBag.Token = token;
                 return View("ChangePassword");
             }
 
@@ -797,32 +825,44 @@ namespace StajyerTakipSistemi.Web.Controllers
             
         }
         [HttpPost]
-        public async Task<IActionResult> ResetPassword(string guid, string newPassword)
+        public async Task<IActionResult> ResetPassword(string guid, string newPassword,string token)
         {
             if (string.IsNullOrEmpty(guid) || string.IsNullOrEmpty(newPassword))
             {
                  
                 TempData["Message"] = "Geçersiz istek!";
                 TempData["AlertClass"] = "alert-danger";
+                return RedirectToAction("ChangePassword", new { token });//////////
             }
-
+            if (newPassword.Length<8) {
+                TempData["Message"] = "Şifreniz en az 8 karakter içermelidir!";
+                TempData["AlertClass"] = "alert-danger";
+                return RedirectToAction("ChangePassword", new { token });////////
+            }
              
             if (Guid.TryParse(guid, out Guid guidValue))
             {
                 
                 var intern = await _context.SInterns.FirstOrDefaultAsync(s => s.Guid == guidValue);
                 var manager = await _context.SManagers.FirstOrDefaultAsync(s => s.Guid == guidValue);
+                var Admin = await _context.admin.FirstOrDefaultAsync(s => s.Guid == guidValue);
 
                 if (intern != null)
                 { 
-                    intern.Password = newPassword;
+                    intern.Password = PasswordHasher.HashPassword(newPassword);
                     _context.Update(intern);
                 }
                 else if (manager != null)
                 {
                     
-                    manager.Password = newPassword;
+                    manager.Password = PasswordHasher.HashPassword(newPassword);
                     _context.Update(manager);
+                }
+                else if (Admin != null)
+                {
+
+                    Admin.Password = PasswordHasher.HashPassword(newPassword);
+                    _context.Update(Admin);
                 }
                 else
                 {
@@ -947,12 +987,12 @@ namespace StajyerTakipSistemi.Web.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    TempData["Message"] = "File(s) have been successfully uploaded.";
+                    TempData["Message"] = "Dosya(lar) başarıyla yüklendi.";
                     TempData["AlertClass"] = "alert-success";
                 }
                 else
                 {
-                    TempData["Message"] = "No files were attached. Please select a file to upload.";
+                    TempData["Message"] = "Lütfen yüklemek istediğiniz dosyayı seçin.";
                     TempData["AlertClass"] = "alert-warning";
                 }
 
@@ -1014,12 +1054,12 @@ namespace StajyerTakipSistemi.Web.Controllers
                     _context.SAssignedTasks.Add(assignedTask);
                     await _context.SaveChangesAsync();
 
-                    TempData["Message"] = "Task has been successfully uploaded.";
+                    TempData["Message"] = "Görev Başarıyla yüklendi.";
                     TempData["AlertClass"] = "alert-success";
                 }
                 else
                 {
-                    TempData["Message"] = "Please enter Task Subject, select a file, and choose a due date.";
+                    TempData["Message"] = "Lütfen alanları doldurunuz.";
                     TempData["AlertClass"] = "alert-warning";
                 }
 

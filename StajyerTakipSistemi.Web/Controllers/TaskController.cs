@@ -27,7 +27,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                 {
                      
                     var assignedTasks = _context.SAssignedTasks.Where(s => s.InternId == id).ToList();
-                    var overdueTasks = assignedTasks.Where(t => t.DueDate.HasValue && t.DueDate < DateTime.Now).ToList();
+                    var overdueTasks = assignedTasks.Where(t => t.DueDate.HasValue && t.DueDate < DateTime.Now.Date).ToList();
                     var taskDetails = new List<STaskDetail>();  
 
                     foreach (var activeTask in overdueTasks)

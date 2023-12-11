@@ -1,4 +1,6 @@
-﻿namespace StajyerTakipSistemi.Web.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace StajyerTakipSistemi.Web.Models
 {
     public class SFinal
     {
@@ -8,6 +10,7 @@
         public string GitHubLink { get; set; }
         public string YouTubeLink { get; set; }
         public bool? EvaluationStatus { get; set; } = false;
+        [DataType(DataType.Date)]
         public DateTime SubmitDate { get; set; }
     }
 }

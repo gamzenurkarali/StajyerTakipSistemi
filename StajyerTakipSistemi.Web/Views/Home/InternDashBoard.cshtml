@@ -245,6 +245,52 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
+
+    
+    dialog {
+        border: 0;
+        border-radius: 30px;
+        padding: 4rem;
+        width: 400px;
+        color: var(--text-color);
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    }
+
+     
+
+    dialog button:hover {
+        /* transform: scale(1.1) !important; */
+    }
+
+    dialog[open] {
+        width: 680px;
+        display: flex;
+        flex-direction: column;
+        animation: lastik .15s cubic-bezier(0, 1.8, 1, 1.8);
+    }
+
+
+    ::backdrop {
+        --color-backdrop: red;
+    }
+
+    dialog::backdrop {
+        background: var(--color-backdrop);
+    }
+
+    dialog h3 {
+        margin-bottom: 0;
+        color: var(--title-color);
+    }
+
+    dialog .actions {
+        display: flex;
+        gap: 10px;
+    }
+
+        dialog .actions button {
+            width: 100%;
+        }
 </style>
 @section Styles{
     <link rel="stylesheet" href="~/dashboard.css">
@@ -292,7 +338,16 @@
                                 <span>Change Image</span>
                             </label>
                             <input id="file" type="file" name="file" onchange="loadFile(event)" accept=".jpg, .jpeg, .png" />
-                            <img src="@Url.Content("~/ProfilePictures/" +  Model.Intern.Photo)" id="output" width="200" />
+                            @if (Model.Intern.Photo == null)
+                            {
+                                <img src="~/DefaultPersonAvatar.png" id="output" width="200" />
+                            }
+                            else
+                            {
+                                <img src="@Url.Content("~/ProfilePictures/" +  Model.Intern.Photo)" id="output" width="200" />
+
+
+                            } 
                         </div>
 
                         <div class="actions">
@@ -310,8 +365,8 @@
 
             <div class="dashboard-header__date">@DateTime.Now.ToString("dddd"), @DateTime.Now.Day @DateTime.Now.ToString("MMMM")</div>
         </div>
-        <div class="dashboard-card weather" style="box-shadow: inset 4px 0 0 #3bb275, 0 1px 0 rgba(0, 0, 0, 0.1);">
-            <div class="dashboard-card__title"><span class="wi wi-day-sunny"></span>Günlük rapor yükle</div>
+        <div class="dashboard-card weather" style="box-shadow: inset 4px 0 0 #3bb275, 0 1px 0 rgba(0, 0, 0, 0.1);">@* this *@
+            <div class="dashboard-card__title"><span class="wi wi-day-sunny"></span>Günlük rapor yükle</div>@* this *@
             <div class="dashboad-card__content">
                 <div class="dashboard-card__card-piece">
 
@@ -330,16 +385,16 @@
                                     @if (Model.ExistingReportForToday != null)
                                     {
                                         <div style="display:flex;flex-flow:row;" data-report-id="@Model.ExistingReportForToday.Id">
-                                            <span style="max-width: 415px;overflow-wrap: anywhere;overflow: overlay;">@Model.ExistingReportForToday.FileName</span>
-                                            <button type="button" id="deleteButton" class="btn btn-danger" onclick="Sure(@Model.ExistingReportForToday.Id)" style="display:none;">Sil</button>
+                                            <span style="max-width: 90%;;overflow-wrap: anywhere;overflow: overlay;">@Model.ExistingReportForToday.FileName</span>
+                                            <button type="button" id="deleteButton" class="btn btn-danger" onclick="Sure(@Model.ExistingReportForToday.Id)" style="display:none;margin-left: 5px;">Sil</button>
                                         </div>
                                     }
                                 </div>
                             </div>
                             <div id="buttons" style="display:flex;flex-flow:row;gap:1rem;">
 
-                                <button type="button" id="editButton" class="btn btn-dark edit-button" style="width: 120px;" @(Model.HasReportForToday ? "" : "disabled")>Düzenle</button>
-                                <button type="submit" id="submitButton" class="btn btn-dark submit-button" style="width: 120px;" disabled>Gönder</button>
+                                <button type="button" id="editButton" class="btn btn-dark edit-button" style="width: 200px;" @(Model.HasReportForToday ? "" : "disabled")>Düzenle</button>
+                                <button type="submit" id="submitButton" class="btn btn-dark submit-button" style="width: 200px;" disabled>Gönder</button>
                             </div>
 
                         </div>
@@ -363,11 +418,11 @@
                             });
                         </script>
                     }
-                    <a asp-action="Index" asp-controller="DailyReport" asp-route-id="@Model.Intern.Id" class="dashboard-card__link" tabindex="1" target="_blank" style="margin-top: 67px;">View in another tab<span class="fa fa-angle-right"></span></a>
+                    <a asp-action="Index" asp-controller="DailyReport" asp-route-id="@Model.Intern.Id" class="dashboard-card__link" tabindex="1" target="_blank" style="margin-top:10px;">Yeni Sekmede Görüntüle<span class="fa fa-angle-right"></span></a>
                 </div>
             </div>
         </div>
-        <div class="dashboard-card temperature" style="background-color:white;height: 312px !important;">
+        <div class="dashboard-card temperature" style="background-color:white;height: 312px !important;"> @* this *@
             <div class="dashboad-card__content" >
                 <div class="dashboard-card__card-piece">
                     <div class="calendar-container">
@@ -386,29 +441,29 @@
                 </div>
             </div>
         </div>
-        <div onclick="showactivetasks()" style="cursor:pointer;padding-block-start: 2.5rem;box-shadow: inset 4px 0 0 #3bb275, 0 1px 0 rgba(0, 0, 0, 0.1);" class="dashboard-card wifi">
+        <div onclick="showactivetasks()" style="cursor:pointer;padding-block-start: 2.5rem;box-shadow: inset 4px 0 0 #3bb275, 0 1px 0 rgba(0, 0, 0, 0.1);" class="dashboard-card wifi"> @* this *@
             <div class="dashboad-card__content">
                 <div class="dashboard-card__card-piece">
                     <div class="status status_success">
                         <div class="status__icon"><span class="fa fa-check"></span></div>
                         <p onclick="showactivetasks()" class="status__text">Görevler</p>
                     </div>
-                    <a asp-action="ShowActiveTasks" asp-controller="Task" asp-route-id="@Model.Intern.Id" class="dashboard-card__link" tabindex="1" target="_blank">View in another tab<span class="fa fa-angle-right"></span></a>
+                    <a asp-action="ShowActiveTasks" asp-controller="Task" asp-route-id="@Model.Intern.Id" class="dashboard-card__link" tabindex="1" target="_blank">Yeni Sekmede Görüntüle<span class="fa fa-angle-right"></span></a>
                 </div>
             </div>
         </div>
-        <div onclick="shownotactivetasks()" style="cursor:pointer;padding-block-start: 2.5rem;box-shadow: inset 4px 0 0 #3bb275, 0 1px 0 rgba(0, 0, 0, 0.1);" class="dashboard-card alarm">
+        <div onclick="shownotactivetasks()" style="cursor:pointer;padding-block-start: 2.5rem;box-shadow: inset 4px 0 0 #3bb275, 0 1px 0 rgba(0, 0, 0, 0.1);" class="dashboard-card alarm"> @* this *@
             <div class="dashboad-card__content">
                 <div class="dashboard-card__card-piece">
                     <div class="status status_danger">
                         <div class="status__icon"><span class="fa fa-times"></span></div>
                         <p onclick="shownotactivetasks()" class="status__text">Geçmiş Görevler</p>
                     </div>
-                    <a asp-action="ShowOverdueTasks" asp-controller="Task" asp-route-id="@Model.Intern.Id" class="dashboard-card__link" tabindex="1" target="_blank">View in another tab<span class="fa fa-angle-right"></span></a>
+                    <a asp-action="ShowOverdueTasks" asp-controller="Task" asp-route-id="@Model.Intern.Id" class="dashboard-card__link" tabindex="1" target="_blank">Yeni Sekmede Görüntüle<span class="fa fa-angle-right"></span></a>
                 </div>
             </div>
         </div>
-        <div class="dashboard-card light" style="box-shadow: inset 4px 0 0 #3bb275, 0 1px 0 rgba(0, 0, 0, 0.1);">
+        <div class="dashboard-card light" style="box-shadow: inset 4px 0 0 #3bb275, 0 1px 0 rgba(0, 0, 0, 0.1);"> @* this *@
             <div class="dashboad-card__content">
                 <div class="dashboard-card__card-piece">
                    
@@ -491,16 +546,16 @@
             });
 
             editButton.addEventListener("click", function () {
-                if (editButton.innerText === "Edit") {
+                if (editButton.innerText === "Düzenle") {
                     //Edit mode
                     chooseFilesBtn.disabled = false;
                     deleteButton.style.display = "block";
-                    editButton.innerText = "Exit Edit";
+                    editButton.innerText = "Düzenleme modundan çık";
                 } else {
                     // Exit edit mode
                     chooseFilesBtn.disabled = true;
                     deleteButton.style.display = "none";
-                    editButton.innerText = "Edit";
+                    editButton.innerText = "Düzenle";
                 }
             });
         });
@@ -665,6 +720,7 @@
                 $('#location-modal').hide();
 
                 clearModalContent();
+                 
             });
 
             $('.remove-photo').click(function () {

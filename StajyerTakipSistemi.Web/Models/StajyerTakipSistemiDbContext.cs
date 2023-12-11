@@ -156,6 +156,8 @@ public partial class StajyerTakipSistemiDbContext : DbContext
 
             entity.Property(e => e.Password).HasMaxLength(50);
             entity.Property(e => e.Username).HasMaxLength(50);
+            entity.Property(e => e.Guid).HasDefaultValueSql("(newsequentialid())");
+            entity.Property(e => e.Email).HasMaxLength(255);
         });
         modelBuilder.Entity<SFinal>(entity =>
         {

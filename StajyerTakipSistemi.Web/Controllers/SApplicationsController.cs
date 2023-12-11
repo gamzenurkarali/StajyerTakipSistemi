@@ -83,7 +83,7 @@ namespace StajyerTakipSistemi.Web.Controllers
 
                 List<string> errorMessages = new List<string>();
 
-                if (string.IsNullOrEmpty(sApplication.FirstName) || string.IsNullOrEmpty(sApplication.LastName) || string.IsNullOrEmpty(sApplication.Email) || string.IsNullOrEmpty(sApplication.PhoneNumber) || string.IsNullOrEmpty(sApplication.Address) || string.IsNullOrEmpty(sApplication.DesiredField) || string.IsNullOrEmpty(sApplication.Explanation) || sApplication.BirthDate == null)
+                if (string.IsNullOrEmpty(sApplication.FirstName) || string.IsNullOrEmpty(sApplication.LastName) || string.IsNullOrEmpty(sApplication.Email) || string.IsNullOrEmpty(sApplication.PhoneNumber) || string.IsNullOrEmpty(sApplication.Address) || string.IsNullOrEmpty(sApplication.DesiredField) || string.IsNullOrEmpty(sApplication.Explanation) || sApplication.BirthDate == null || sApplication.ApplicationDate == null)
                 {
                     errorMessages.Add("Lütfen istenen bilgileri doldurunuz.");
                 }
@@ -216,7 +216,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                 {
                     List<string> errorMessages = new List<string>();
 
-                    if (string.IsNullOrEmpty(sApplication.FirstName) || string.IsNullOrEmpty(sApplication.LastName) || string.IsNullOrEmpty(sApplication.Email) || string.IsNullOrEmpty(sApplication.PhoneNumber) || string.IsNullOrEmpty(sApplication.Address) || string.IsNullOrEmpty(sApplication.DesiredField) || string.IsNullOrEmpty(sApplication.Explanation) || sApplication.BirthDate == null)
+                    if (string.IsNullOrEmpty(sApplication.FirstName) || string.IsNullOrEmpty(sApplication.LastName) || string.IsNullOrEmpty(sApplication.Email) || string.IsNullOrEmpty(sApplication.PhoneNumber) || string.IsNullOrEmpty(sApplication.Address) || string.IsNullOrEmpty(sApplication.DesiredField) || string.IsNullOrEmpty(sApplication.Explanation) || sApplication.BirthDate == null || sApplication.ApplicationDate == null)
                     {
                         errorMessages.Add("Lütfen istenen bilgileri doldurunuz.");
                     }
@@ -247,7 +247,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                         return View(sApplication);
                     }
                     var originalApplication = await _context.SApplications.FindAsync(id);
-
+                    var beforeHash = await GenerateUniquePasswordAsync();
                     if (sApplication.ApprovalStatus == "Onaylandı")
                     {
 
@@ -265,7 +265,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                             StartDate = DateTime.Now,
                             EndDate = DateTime.Now.AddDays(90),
                             Username = GenerateUniqueUsername(),
-                            Password = await GenerateUniquePasswordAsync(),
+                            Password = PasswordHasher.HashPassword(beforeHash),
                             
 
                         };
@@ -289,7 +289,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                         content += "<p>Staja kabul edildiniz! Aşağıda staj bilgileriniz bulunmaktadır:</p>";
                         content += $"<ul>";
                         content += $"<li>Kullanıcı Adı: <strong>{internRecord.Username}</strong></li>";
-                        content += $"<li>Şifre: <strong>{internRecord.Password}</strong></li>";
+                        content += $"<li>Şifre: <strong>{beforeHash}</strong></li>";
                         content += $"</ul>";
                         content += "<p>İyi çalışmalar dileriz!</p>";
 
@@ -317,7 +317,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                         catch (Exception ex)
                         {
                             Console.WriteLine("E-posta gönderme hatası: " + ex.Message);
-                            return RedirectToAction("Evaluate");
+                            return View();
                         }
                          
 
