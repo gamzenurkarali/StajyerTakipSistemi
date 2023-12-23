@@ -183,8 +183,8 @@ namespace StajyerTakipSistemi.Web.Controllers
             var to = sManager.Email;
             var subject = "İNSPİMO";
 
-            var content = $"<h2 style=\"color: #3498db;\">İNSPİMO Staj Başvurunuz Onaylandı!</h2>";
-            content += "<p>İnspimo'da artık siz de yetkilisiniz! Aşağıda bilgileriniz bulunmaktadır:</p>";
+              
+            var content  = "<p>İnspimo'da artık siz de yetkilisiniz! Aşağıda bilgileriniz bulunmaktadır:</p>";
             content += $"<ul>";
             content += $"<li>Kullanıcı Adı: <strong>{sManager.Username}</strong></li>";
             content += $"<li>Şifre: <strong>{password}</strong></li>";

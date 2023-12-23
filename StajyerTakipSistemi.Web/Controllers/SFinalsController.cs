@@ -214,6 +214,24 @@ namespace StajyerTakipSistemi.Web.Controllers
 
             return View(recs);
         }
+        public async Task<IActionResult> DetailsForManager(int? id)
+        {
+            var interns = _context.SInterns.ToList();
 
+            ViewData["interns"] = interns;
+            if (id == null || _context.SFinal == null)
+            {
+                return NotFound();
+            }
+
+            var sFinal = await _context.SFinal
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (sFinal == null)
+            {
+                return NotFound();
+            }
+
+            return View(sFinal);
+        }
     }
 }

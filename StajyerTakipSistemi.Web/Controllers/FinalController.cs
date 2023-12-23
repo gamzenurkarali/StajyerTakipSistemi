@@ -181,6 +181,11 @@ namespace StajyerTakipSistemi.Web.Controllers
             TempData["FinalId"] = id;
             return View();
         }
+        public async Task<IActionResult> EvaluateForManager(int id)
+        {
+            TempData["FinalId"] = id;
+            return View();
+        }
 
 
 
