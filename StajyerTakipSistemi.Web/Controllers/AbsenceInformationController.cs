@@ -25,7 +25,7 @@ namespace WebApplication6.Web.Controllers
         public async Task<IActionResult> Index(int? id)
         {
             var guidString = HttpContext.Session.GetString("Guid");
-            var loggedinuserid = int.Parse(HttpContext.Session.GetString("UserId"));
+           
 
             if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
@@ -37,6 +37,8 @@ namespace WebApplication6.Web.Controllers
             bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
             var userManagerExist = new UserManagerExist(_context);
             bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+
+            var loggedinuserid = int.Parse(HttpContext.Session.GetString("UserId"));
             if ((isInternGuidValid == true && loggedinuserid==id) || isManagerGuidValid == true)
             {
                 int internId = 0;

@@ -44,16 +44,26 @@ namespace StajyerTakipSistemi.Web.Controllers
             {
                 if (HttpContext.Session.GetString("UserId") != null)
                 {
-                    var hasRecord = _context.SFinal.Any(s => s.InternId == int.Parse(HttpContext.Session.GetString("UserId")));
-                    if (hasRecord)
+                    var loggedinuserr = _context.SInterns.FirstOrDefault(x=>x.Id==int.Parse(HttpContext.Session.GetString("UserId")));
+
+                    if (DateTime.Now.Date == loggedinuserr.EndDate.Date)
                     {
-                        ViewBag.Flag = true;
+                        var hasRecord = _context.SFinal.Any(s => s.InternId == int.Parse(HttpContext.Session.GetString("UserId")));
+                        if (hasRecord)
+                        {
+                            ViewBag.Flag = true;
+                        }
+                        else
+                        {
+                            ViewBag.Flag = false;
+                        }
+                        return View();
                     }
                     else
                     {
-                        ViewBag.Flag = false;
+                        return RedirectToAction("Error", "Home");
                     }
-                    return View();
+
                 }
                 else
                 {
@@ -221,12 +231,12 @@ namespace StajyerTakipSistemi.Web.Controllers
             var userManagerExist = new UserManagerExist(_context);
             bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
 
-            if (HttpContext.Session.GetString("UserId") != null && isInternGuidValid == true)
+            if (HttpContext.Session.GetString("UserId") != null && (isAdminGuidValid == true || isManagerGuidValid == true))
             {
                 TempData["FinalId"] = id;
                 return View();
             }
-            else if (isAdminGuidValid == true || isManagerGuidValid == true)
+            else if (isInternGuidValid==true)
             {
                 return RedirectToAction("Error", "Home");
             }

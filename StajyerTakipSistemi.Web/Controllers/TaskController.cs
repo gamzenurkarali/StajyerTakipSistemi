@@ -22,7 +22,7 @@ namespace StajyerTakipSistemi.Web.Controllers
         public async Task<IActionResult> ShowOverdueTasks(int? id)
         {
             var guidString = HttpContext.Session.GetString("Guid");
-            var loggedinuser = int.Parse(HttpContext.Session.GetString("UserId"));
+            
             if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
                 return RedirectToAction("Login", "Home");
@@ -33,8 +33,8 @@ namespace StajyerTakipSistemi.Web.Controllers
             bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
             var userManagerExist = new UserManagerExist(_context);
             bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
-
-            if((HttpContext.Session.GetString("UserId") != null && (isManagerGuidValid == true || (isInternGuidValid == true && loggedinuser == id))))
+            var loggedinuser = int.Parse(HttpContext.Session.GetString("UserId"));
+            if ((HttpContext.Session.GetString("UserId") != null && (isManagerGuidValid == true || (isInternGuidValid == true && loggedinuser == id))))
             {
                 if (HttpContext.Session.GetString("UserId") != null)
                 {
@@ -71,7 +71,7 @@ namespace StajyerTakipSistemi.Web.Controllers
 
                 return RedirectToAction("Login");
             }
-            else if (isAdminGuidValid == true )
+            else if (isAdminGuidValid == true|| (isInternGuidValid == true && loggedinuser != id))
             {
                 return RedirectToAction("Error", "Home");
             }
@@ -86,7 +86,7 @@ namespace StajyerTakipSistemi.Web.Controllers
         public async Task<IActionResult> ShowActiveTasks(int? id)
         {
             var guidString = HttpContext.Session.GetString("Guid");
-            var loggedinuser = int.Parse(HttpContext.Session.GetString("UserId"));
+            
 
             if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
@@ -98,7 +98,7 @@ namespace StajyerTakipSistemi.Web.Controllers
             bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
             var userManagerExist = new UserManagerExist(_context);
             bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
-
+            var loggedinuser = int.Parse(HttpContext.Session.GetString("UserId"));
             if (HttpContext.Session.GetString("UserId") != null && (isManagerGuidValid == true || (isInternGuidValid == true && loggedinuser==id ) ))
             {
                 if (HttpContext.Session.GetString("UserId") != null)
@@ -135,7 +135,7 @@ namespace StajyerTakipSistemi.Web.Controllers
 
                 return RedirectToAction("Login");
             }
-            else if (isAdminGuidValid == true)
+            else if (isAdminGuidValid == true|| (isInternGuidValid == true && loggedinuser != id))
             {
                 return RedirectToAction("Error", "Home");
             }

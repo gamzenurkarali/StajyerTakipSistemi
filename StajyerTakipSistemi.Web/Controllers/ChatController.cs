@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using StajyerTakipSistemi.Web;
 using StajyerTakipSistemi.Web.Models;
+using System.Linq;
 
 namespace WebApplication6.Web.Controllers
 {
@@ -165,49 +166,73 @@ namespace WebApplication6.Web.Controllers
 
         public IActionResult getmessage()
         {
-            var loggedInUserGuid = Guid.Parse(HttpContext.Session.GetString("Guid"));
+            var guidString = HttpContext.Session.GetString("Guid");
 
-            MessageViewModel viewModel;
-
-            if (HttpContext.Session.GetString("Username").StartsWith("M"))
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                 
-                var users = _context.SInternToManagers
-                    .Where(s => s.ManagerId == int.Parse(HttpContext.Session.GetString("UserId")))
-                    .Select(s => s.Intern)
-                    .ToList();
-
-                viewModel = new MessageViewModel
-                {
-                    LoggedInUserGuid = loggedInUserGuid,
-                    Messages = _context.Messages.ToList(), 
-                    UsersIntern = users,
-                    NewMessages = _context.NewMessages.ToList()
-                };
+                return RedirectToAction("Login", "Home");
             }
-            else if (HttpContext.Session.GetString("Username").StartsWith("G"))
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && (isManagerGuidValid == true|| isInternGuidValid == true ))
             {
-                
-                var users = _context.SInternToManagers
-                    .Where(s => s.InternId == int.Parse(HttpContext.Session.GetString("UserId")))
-                    .Select(s => s.Manager)
-                    .ToList();
+                var loggedInUserGuid = Guid.Parse(HttpContext.Session.GetString("Guid"));
 
-                viewModel = new MessageViewModel
+                MessageViewModel viewModel;
+
+                if (HttpContext.Session.GetString("Username").StartsWith("M"))
                 {
-                    LoggedInUserGuid = loggedInUserGuid,
-                    Messages = _context.Messages.ToList(),  
-                    UsersManager = users,
-                    NewMessages = _context.NewMessages.ToList()
-                };
+
+                    var users = _context.SInternToManagers
+                        .Where(s => s.ManagerId == int.Parse(HttpContext.Session.GetString("UserId")))
+                        .Select(s => s.Intern)
+                        .ToList();
+
+                    viewModel = new MessageViewModel
+                    {
+                        LoggedInUserGuid = loggedInUserGuid,
+                        Messages = _context.Messages.ToList(),
+                        UsersIntern = users,
+                        NewMessages = _context.NewMessages.ToList()
+                    };
+                }
+                else if (HttpContext.Session.GetString("Username").StartsWith("G"))
+                {
+
+                    var users = _context.SInternToManagers
+                        .Where(s => s.InternId == int.Parse(HttpContext.Session.GetString("UserId")))
+                        .Select(s => s.Manager)
+                        .ToList();
+
+                    viewModel = new MessageViewModel
+                    {
+                        LoggedInUserGuid = loggedInUserGuid,
+                        Messages = _context.Messages.ToList(),
+                        UsersManager = users,
+                        NewMessages = _context.NewMessages.ToList()
+                    };
+                }
+                else
+                {
+
+                    return View("Error");
+                }
+
+                return View(viewModel);
+            }
+            else if ( isAdminGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
             }
             else
             {
-                 
-                return View("Error");  
+                return RedirectToAction("Login", "Home");
             }
-
-            return View(viewModel);
+            
         }
 
 
@@ -215,86 +240,111 @@ namespace WebApplication6.Web.Controllers
         // Kullanıcının mesajlarını göster
         public IActionResult getusermessage(string userGuid)
         {
-            var loggedInUserGuid = Guid.Parse(HttpContext.Session.GetString("Guid"));
-            var getuserguid = new Guid(userGuid);
-            var messages = _context.Messages
-                .Where(m => (m.Sender == loggedInUserGuid && m.Receiver == getuserguid) || (m.Sender == getuserguid && m.Receiver == loggedInUserGuid))
-                .ToList();
 
+            var guidString = HttpContext.Session.GetString("Guid");
 
-            var groupedMessages = messages
-                 .GroupBy(msg => DateTimeOffset.FromUnixTimeSeconds(msg.UnixTime.Value).Date)
-                 .Select(group => new GroupedMessagesViewModel
-                 {
-                     Date = group.Key,
-                     Messages = group.ToList()
-                 }).ToList();
-
-            // Bildirimleri sil
-            var messagesToDelete = _context.NewMessages
-                .Where(m => (m.Sender == getuserguid && m.Receiver == loggedInUserGuid))
-                .ToList();
-
-            foreach (var message in messagesToDelete)
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userrGuid))
             {
-                _context.NewMessages.Remove(message);
+                return RedirectToAction("Login", "Home");
             }
-
-            _context.SaveChanges();
-
-            MessageViewModel viewModel;
-            if (HttpContext.Session.GetString("Username").StartsWith("M"))
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && (isManagerGuidValid == true || isInternGuidValid == true))
             {
-                
-                var users = _context.SInternToManagers
-                            .Where(s => s.ManagerId == int.Parse(HttpContext.Session.GetString("UserId")))
-                            .Select(s => s.Intern)
-                            .ToList();
-                var intern = _context.SInterns
-                             .Where(s => s.Guid == new Guid(userGuid))
-                             .FirstOrDefault(); 
-
-                viewModel = new MessageViewModel
-                {
-                    LoggedInUserGuid = Guid.Parse(HttpContext.Session.GetString("Guid")),
-                    Messages = messages,
-                    UsersIntern = users,
-                    TheIntern=intern,
-                    NewMessages = _context.NewMessages.ToList(),
-                    Messagesgrouped = groupedMessages
-                };
-                viewModel.SelectedUserGuid = getuserguid;
-                ViewBag.SelectedUserGuid = getuserguid;
-                return View("ManagerChat", viewModel);
-            }
-            else if (HttpContext.Session.GetString("Username").StartsWith("G"))
-            {
-             
-                var users = _context.SInternToManagers
-                    .Where(s => s.InternId == int.Parse(HttpContext.Session.GetString("UserId")))
-                    .Select(s => s.Manager)
+                var loggedInUserGuid = Guid.Parse(HttpContext.Session.GetString("Guid"));
+                var getuserguid = new Guid(userGuid);
+                var messages = _context.Messages
+                    .Where(m => (m.Sender == loggedInUserGuid && m.Receiver == getuserguid) || (m.Sender == getuserguid && m.Receiver == loggedInUserGuid))
                     .ToList();
 
-                var manager = _context.SManagers
-                             .Where(s => s.Guid == new Guid(userGuid))
-                             .FirstOrDefault(); 
 
-                viewModel = new MessageViewModel
+                var groupedMessages = messages
+                     .GroupBy(msg => DateTimeOffset.FromUnixTimeSeconds(msg.UnixTime.Value).Date)
+                     .Select(group => new GroupedMessagesViewModel
+                     {
+                         Date = group.Key,
+                         Messages = group.ToList()
+                     }).ToList();
+
+                // Bildirimleri sil
+                var messagesToDelete = _context.NewMessages
+                    .Where(m => (m.Sender == getuserguid && m.Receiver == loggedInUserGuid))
+                    .ToList();
+
+                foreach (var message in messagesToDelete)
                 {
-                    LoggedInUserGuid = Guid.Parse(HttpContext.Session.GetString("Guid")),
-                    Messages = messages,
-                    UsersManager = users,
-                    TheManager=manager,
-                    NewMessages = _context.NewMessages.ToList(),
-                    Messagesgrouped = groupedMessages
-                };
-                return View("Index", viewModel);
+                    _context.NewMessages.Remove(message);
+                }
+
+                _context.SaveChanges();
+
+                MessageViewModel viewModel;
+                if (HttpContext.Session.GetString("Username").StartsWith("M"))
+                {
+
+                    var users = _context.SInternToManagers
+                                .Where(s => s.ManagerId == int.Parse(HttpContext.Session.GetString("UserId")))
+                                .Select(s => s.Intern)
+                                .ToList();
+                    var intern = _context.SInterns
+                                 .Where(s => s.Guid == new Guid(userGuid))
+                                 .FirstOrDefault();
+
+                    viewModel = new MessageViewModel
+                    {
+                        LoggedInUserGuid = Guid.Parse(HttpContext.Session.GetString("Guid")),
+                        Messages = messages,
+                        UsersIntern = users,
+                        TheIntern = intern,
+                        NewMessages = _context.NewMessages.ToList(),
+                        Messagesgrouped = groupedMessages
+                    };
+                    viewModel.SelectedUserGuid = getuserguid;
+                    ViewBag.SelectedUserGuid = getuserguid;
+                    return View("ManagerChat", viewModel);
+                }
+                else if (HttpContext.Session.GetString("Username").StartsWith("G"))
+                {
+
+                    var users = _context.SInternToManagers
+                        .Where(s => s.InternId == int.Parse(HttpContext.Session.GetString("UserId")))
+                        .Select(s => s.Manager)
+                        .ToList();
+
+                    var manager = _context.SManagers
+                                 .Where(s => s.Guid == new Guid(userGuid))
+                                 .FirstOrDefault();
+
+                    viewModel = new MessageViewModel
+                    {
+                        LoggedInUserGuid = Guid.Parse(HttpContext.Session.GetString("Guid")),
+                        Messages = messages,
+                        UsersManager = users,
+                        TheManager = manager,
+                        NewMessages = _context.NewMessages.ToList(),
+                        Messagesgrouped = groupedMessages
+                    };
+                    return View("Index", viewModel);
+                }
+                else
+                {
+
+                    return View("Error");
+                }
+            }
+            else if (isAdminGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
             }
             else
             {
-                
-                return View("Error");  
+                return RedirectToAction("Login", "Home");
             }
+            
 
             
         }

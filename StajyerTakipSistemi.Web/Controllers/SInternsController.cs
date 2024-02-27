@@ -241,6 +241,15 @@ namespace StajyerTakipSistemi.Web.Controllers
 
 
 
+                _context.SInternToManagers.Add(new SInternToManager
+                {
+                    InternId = sIntern.Id,
+                    ManagerId = GetRandomManagerId()
+                });
+                await _context.SaveChangesAsync();
+
+
+
                 var from = "stajyertakip@gmail.com";
                 var to = sIntern.Email;
                 var subject = "İNSPİMO Staj Kabul";
@@ -287,7 +296,15 @@ namespace StajyerTakipSistemi.Web.Controllers
             }
             return View(sIntern);
         }
+        private int GetRandomManagerId()
+        {
+            var randomManagerId = _context.SManagers
+                .OrderBy(x => Guid.NewGuid())
+                .Select(x => x.Id)
+                .FirstOrDefault();
 
+            return randomManagerId;
+        }
         // GET: SInterns/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
