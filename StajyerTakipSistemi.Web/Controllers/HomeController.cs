@@ -20,6 +20,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace StajyerTakipSistemi.Web.Controllers
 {
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -458,137 +459,162 @@ namespace StajyerTakipSistemi.Web.Controllers
         }
         public IActionResult InternDashboard()
         {
-            try
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                var userIdString = HttpContext.Session.GetString("UserId");
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
 
-                if (string.IsNullOrEmpty(userIdString))
+            if (HttpContext.Session.GetString("UserId") != null && isInternGuidValid == true)
+            {
+                try
                 {
-                    // UserId alınamadı .
-                    return RedirectToAction("Login");
-                }
+                    var userIdString = HttpContext.Session.GetString("UserId");
 
-                if (!int.TryParse(userIdString, out int userId))
-                {
-                    // UserId dönüştürülemedi 
-                    return RedirectToAction("Login");
-                }
-
-                var intern = _context.SInterns.FirstOrDefault(s => s.Id == userId);
-
-
-                if (intern == null)
-                {
-                    // İlgili stajyer bulunamadı 
-                    return RedirectToAction("Login");
-                }
-                var loggedinUserGuidString = HttpContext.Session.GetString("Guid");
-
-                if (string.IsNullOrEmpty(loggedinUserGuidString) || !Guid.TryParse(loggedinUserGuidString, out Guid loggedinUserGuid))
-                {
-                    
-                    return RedirectToAction("Login");
-                }
-
-                 
-                var viewModel = new InternDashboardViewModel
-                {
-                    Intern = intern
-                };
-
-
-
-                //Raporları getirme
-                var reports = _context.SDailyReports
-                    .Where(s => s.internGuid == loggedinUserGuid)
-                    .OrderBy(r => r.UnixTime)
-                    .ToList();
-                if (reports.Count > 0)
-                {
-                    viewModel.Reports = reports;
-                }
-
-
-
-
-                //Devamsızlık bilgisi getirme
-                var absenceInfos = _context.SAbsenceInformations.Where(s => s.InternId == userId).ToList();
-                if (absenceInfos.Count > 0)
-                {
-                    viewModel.AbsenceInfo = absenceInfos;
-                }
-                List<string> markedDates = absenceInfos
-                           .Where(a => a.AbsenceDate.HasValue)
-                           .Select(a => a.AbsenceDate.Value.ToString("yyyy-MM-dd"))
-                           .ToList();
-                ViewBag.MarkedDates = markedDates;
-
-                //aktif ve son teslim tarihi geçmiş görevleri getirme
-                var assignedTasks = _context.SAssignedTasks
-                   .Where(t => t.InternId == userId)
-                   .ToList();
-
-                var overdueTaskAssigned = assignedTasks.Where(t => t.DueDate.HasValue && t.DueDate < DateTime.Now).ToList();
-                var activeTaskAssigned = assignedTasks.Where(t => t.DueDate.HasValue && t.DueDate >= DateTime.Now.Date).ToList();
-
-                var activeTaskDetails = new List<STaskDetail>();
-
-                foreach (var activeTask in activeTaskAssigned)
-                {
-                    var activeTaskDetail = _context.STaskDetails.FirstOrDefault(td => td.Id == activeTask.TaskId);
-
-                    if (activeTaskDetails != null)
+                    if (string.IsNullOrEmpty(userIdString))
                     {
-                        activeTaskDetails.Add(activeTaskDetail);
+                        // UserId alınamadı .
+                        return RedirectToAction("Login");
                     }
-                }
-                var overdueTaskDetails = new List<STaskDetail>();
-                foreach (var overdueTask in overdueTaskAssigned)
-                {
-                    var overdueTaskDetail = _context.STaskDetails.FirstOrDefault(td => td.Id == overdueTask.TaskId);
 
-                    if (overdueTaskDetails != null)
+                    if (!int.TryParse(userIdString, out int userId))
                     {
-                        overdueTaskDetails.Add(overdueTaskDetail);
+                        // UserId dönüştürülemedi 
+                        return RedirectToAction("Login");
                     }
-                }
-                if (overdueTaskAssigned.Count > 0)
-                {
-                    viewModel.AssignedOverdueTask = overdueTaskAssigned;
-                    viewModel.OverdueTaskDetails = overdueTaskDetails;
-                }
-                if (activeTaskAssigned.Count > 0)
-                {
-                    viewModel.AssignedActiveTask = activeTaskAssigned;
-                    viewModel.ActiveTaskDetails = activeTaskDetails;
-                }
 
-                var today = DateTime.Now.Date; 
-                var hasReportForToday = _context.SDailyReports.Any(r => r.InternId == userId &&
-                                          DateTime.UnixEpoch.AddSeconds(r.UnixTime).Date == today);
-                if (hasReportForToday)
-                {
-                    var existingReport = _context.SDailyReports
-                        .FirstOrDefault(r => r.InternId == userId &&
+                    var intern = _context.SInterns.FirstOrDefault(s => s.Id == userId);
+
+
+                    if (intern == null)
+                    {
+                        // İlgili stajyer bulunamadı 
+                        return RedirectToAction("Login");
+                    }
+                    var loggedinUserGuidString = HttpContext.Session.GetString("Guid");
+
+                    if (string.IsNullOrEmpty(loggedinUserGuidString) || !Guid.TryParse(loggedinUserGuidString, out Guid loggedinUserGuid))
+                    {
+
+                        return RedirectToAction("Login");
+                    }
+
+
+                    var viewModel = new InternDashboardViewModel
+                    {
+                        Intern = intern
+                    };
+
+
+
+                    //Raporları getirme
+                    var reports = _context.SDailyReports
+                        .Where(s => s.internGuid == loggedinUserGuid)
+                        .OrderBy(r => r.UnixTime)
+                        .ToList();
+                    if (reports.Count > 0)
+                    {
+                        viewModel.Reports = reports;
+                    }
+
+
+
+
+                    //Devamsızlık bilgisi getirme
+                    var absenceInfos = _context.SAbsenceInformations.Where(s => s.InternId == userId).ToList();
+                    if (absenceInfos.Count > 0)
+                    {
+                        viewModel.AbsenceInfo = absenceInfos;
+                    }
+                    List<string> markedDates = absenceInfos
+                               .Where(a => a.AbsenceDate.HasValue)
+                               .Select(a => a.AbsenceDate.Value.ToString("yyyy-MM-dd"))
+                               .ToList();
+                    ViewBag.MarkedDates = markedDates;
+
+                    //aktif ve son teslim tarihi geçmiş görevleri getirme
+                    var assignedTasks = _context.SAssignedTasks
+                       .Where(t => t.InternId == userId)
+                       .ToList();
+
+                    var overdueTaskAssigned = assignedTasks.Where(t => t.DueDate.HasValue && t.DueDate < DateTime.Now).ToList();
+                    var activeTaskAssigned = assignedTasks.Where(t => t.DueDate.HasValue && t.DueDate >= DateTime.Now.Date).ToList();
+
+                    var activeTaskDetails = new List<STaskDetail>();
+
+                    foreach (var activeTask in activeTaskAssigned)
+                    {
+                        var activeTaskDetail = _context.STaskDetails.FirstOrDefault(td => td.Id == activeTask.TaskId);
+
+                        if (activeTaskDetails != null)
+                        {
+                            activeTaskDetails.Add(activeTaskDetail);
+                        }
+                    }
+                    var overdueTaskDetails = new List<STaskDetail>();
+                    foreach (var overdueTask in overdueTaskAssigned)
+                    {
+                        var overdueTaskDetail = _context.STaskDetails.FirstOrDefault(td => td.Id == overdueTask.TaskId);
+
+                        if (overdueTaskDetails != null)
+                        {
+                            overdueTaskDetails.Add(overdueTaskDetail);
+                        }
+                    }
+                    if (overdueTaskAssigned.Count > 0)
+                    {
+                        viewModel.AssignedOverdueTask = overdueTaskAssigned;
+                        viewModel.OverdueTaskDetails = overdueTaskDetails;
+                    }
+                    if (activeTaskAssigned.Count > 0)
+                    {
+                        viewModel.AssignedActiveTask = activeTaskAssigned;
+                        viewModel.ActiveTaskDetails = activeTaskDetails;
+                    }
+
+                    var today = DateTime.Now.Date;
+                    var hasReportForToday = _context.SDailyReports.Any(r => r.InternId == userId &&
                                               DateTime.UnixEpoch.AddSeconds(r.UnixTime).Date == today);
+                    if (hasReportForToday)
+                    {
+                        var existingReport = _context.SDailyReports
+                            .FirstOrDefault(r => r.InternId == userId &&
+                                                  DateTime.UnixEpoch.AddSeconds(r.UnixTime).Date == today);
 
-                    viewModel.ExistingReportForToday = existingReport;
+                        viewModel.ExistingReportForToday = existingReport;
 
 
+                    }
+
+
+                    viewModel.HasReportForToday = hasReportForToday;
+
+
+
+                    return View(viewModel);
                 }
+                catch (Exception ex)
+                {
 
-
-                viewModel.HasReportForToday = hasReportForToday;
-
-                 
-
-                return View(viewModel);
+                    return RedirectToAction("Error");
+                }
             }
-            catch (Exception ex)
+            else if (isManagerGuidValid == true || isAdminGuidValid == true)
             {
-                 
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", "Home");
             }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+           
         }
         
 
@@ -598,60 +624,87 @@ namespace StajyerTakipSistemi.Web.Controllers
 
     public async Task<IActionResult> ManagerDashBoard()
         {
-            if (HttpContext.Session.GetString("UserId") != null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                var userId = int.Parse(HttpContext.Session.GetString("UserId"));
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
 
-                var internList = await _context.SInternToManagers
-                    .Where(s => s.ManagerId == userId)
-                    .Select(s => s.Intern)
-                    .ToListAsync();
-
-                var overdueTaskCounts = new Dictionary<int, int>();
-                var activeTaskCounts = new Dictionary<int, int>();
-
-
-                var recs = new List<SFinal>(); 
-                foreach (var intern in internList)
+            if (HttpContext.Session.GetString("UserId") != null && isManagerGuidValid == true)
+            {
+                if (HttpContext.Session.GetString("UserId") != null)
                 {
+                    var userId = int.Parse(HttpContext.Session.GetString("UserId"));
 
-                    ////Final kaydı olup olmadığına bak
-                    //var rec = _context.SFinal.FirstOrDefault(s => s.InternId == intern.Id);
-                    //if (rec != null)
-                    //{
-                    //    recs.Add(rec); 
-                    //}
-                    //ViewData["Records"] = recs;
-                    var assignedTasks = _context.SAssignedTasks
-                        .Where(t => t.InternId == intern.Id)
-                        .ToList();
+                    var internList = await _context.SInternToManagers
+                        .Where(s => s.ManagerId == userId)
+                        .Select(s => s.Intern)
+                        .ToListAsync();
 
-                     
-                    var overdueTaskCount = assignedTasks.Count(t => t.DueDate.HasValue && t.DueDate < DateTime.Now.Date);
-                    var activeTaskCount = assignedTasks.Count(t => t.DueDate.HasValue && t.DueDate >= DateTime.Now.Date);
-                     
-                    overdueTaskCounts.Add(intern.Id, overdueTaskCount);
-                    activeTaskCounts.Add(intern.Id, activeTaskCount);
+                    var overdueTaskCounts = new Dictionary<int, int>();
+                    var activeTaskCounts = new Dictionary<int, int>();
+
+
+                    var recs = new List<SFinal>();
+                    foreach (var intern in internList)
+                    {
+
+                        ////Final kaydı olup olmadığına bak
+                        //var rec = _context.SFinal.FirstOrDefault(s => s.InternId == intern.Id);
+                        //if (rec != null)
+                        //{
+                        //    recs.Add(rec); 
+                        //}
+                        //ViewData["Records"] = recs;
+                        var assignedTasks = _context.SAssignedTasks
+                            .Where(t => t.InternId == intern.Id)
+                            .ToList();
+
+
+                        var overdueTaskCount = assignedTasks.Count(t => t.DueDate.HasValue && t.DueDate < DateTime.Now.Date);
+                        var activeTaskCount = assignedTasks.Count(t => t.DueDate.HasValue && t.DueDate >= DateTime.Now.Date);
+
+                        overdueTaskCounts.Add(intern.Id, overdueTaskCount);
+                        activeTaskCounts.Add(intern.Id, activeTaskCount);
+                    }
+
+
+                    var viewModel = new ManagerDashboardViewModel
+                    {
+                        InternList = internList,
+                        OverdueTaskCounts = overdueTaskCounts,
+                        ActiveTaskCounts = activeTaskCounts
+                    };
+
+                    return View(viewModel);
                 }
-
-           
-                var viewModel = new ManagerDashboardViewModel
+                else
                 {
-                    InternList = internList,
-                    OverdueTaskCounts = overdueTaskCounts,
-                    ActiveTaskCounts = activeTaskCounts
-                };
-               
-                return View(viewModel);
+                    return RedirectToAction("Login");
+                }
+            }
+            else if (isInternGuidValid == true || isAdminGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
             }
             else
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Home");
             }
+           
             
         }
         public ActionResult Logout()
         {
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
             if (HttpContext.Session.GetString("Username").StartsWith("M"))
             {
                 HttpContext.Session.SetString("UserId", "");
@@ -663,7 +716,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                 HttpContext.Session.SetString("Guid", "");
                 return RedirectToAction("Login");
             }
-            if (HttpContext.Session.GetString("Username").StartsWith("G"))
+            else if (HttpContext.Session.GetString("Username").StartsWith("G"))
             {
                 HttpContext.Session.SetString("UserId", "");
                 HttpContext.Session.SetString("Username", "");
@@ -679,6 +732,14 @@ namespace StajyerTakipSistemi.Web.Controllers
                 HttpContext.Session.SetString("Startdate", "");
                 HttpContext.Session.SetString("Guid", "");
 
+                return RedirectToAction("Login");
+            }
+            else if (isAdminGuidValid == true)
+            {
+                HttpContext.Session.SetString("UserId", "");
+                HttpContext.Session.SetString("Username", ""); 
+                HttpContext.Session.SetString("Email", ""); 
+                HttpContext.Session.SetString("Guid", "");
                 return RedirectToAction("Login");
             }
             else

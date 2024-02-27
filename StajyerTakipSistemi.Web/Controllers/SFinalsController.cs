@@ -9,6 +9,7 @@ using StajyerTakipSistemi.Web.Models;
 
 namespace StajyerTakipSistemi.Web.Controllers
 {
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class SFinalsController : Controller
     {
         private readonly StajyerTakipSistemiDbContext _context;
@@ -22,22 +23,49 @@ namespace StajyerTakipSistemi.Web.Controllers
         public async Task<IActionResult> Index()
         {
 
-            
-            if (_context.SFinal != null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                var recs = _context.SFinal.ToList();
-                var interns = _context.SInterns.ToList();  
-                 
-                ViewData["interns"] = interns;
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
+            {
+
+                if (_context.SFinal != null)
+                {
+                    var recs = _context.SFinal.ToList();
+                    var interns = _context.SInterns.ToList();
+
+                    ViewData["interns"] = interns;
 
 
-                return View(recs);
+                    return View(recs);
+                }
+                else
+                {
+
+                    return View(Problem("Entity set 'StajyerTakipSistemiDbContext.SFinal'  is null."));
+                }
+
+
+
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
             }
             else
             {
-                
-                return View(Problem("Entity set 'StajyerTakipSistemiDbContext.SFinal'  is null."));
+                return RedirectToAction("Login", "Home");
             }
+            
            
                          
         }
@@ -45,28 +73,85 @@ namespace StajyerTakipSistemi.Web.Controllers
         // GET: SFinals/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            var interns = _context.SInterns.ToList();
+            var guidString = HttpContext.Session.GetString("Guid");
 
-            ViewData["interns"] = interns;
-            if (id == null || _context.SFinal == null)
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                return NotFound();
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
+            {
+
+
+                var interns = _context.SInterns.ToList();
+
+                ViewData["interns"] = interns;
+                if (id == null || _context.SFinal == null)
+                {
+                    return NotFound();
+                }
+
+                var sFinal = await _context.SFinal
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (sFinal == null)
+                {
+                    return NotFound();
+                }
+
+                return View(sFinal);
+
+
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
             }
 
-            var sFinal = await _context.SFinal
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (sFinal == null)
-            {
-                return NotFound();
-            }
-
-            return View(sFinal);
+           
         }
 
         // GET: SFinals/Create
         public IActionResult Create()
         {
-            return View();
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
+            {
+
+
+                return View();
+
+
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            
         }
 
         // POST: SFinals/Create
@@ -88,17 +173,46 @@ namespace StajyerTakipSistemi.Web.Controllers
         // GET: SFinals/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.SFinal == null)
-            {
-                return NotFound();
-            }
 
-            var sFinal = await _context.SFinal.FindAsync(id);
-            if (sFinal == null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                return NotFound();
+                return RedirectToAction("Login", "Home");
             }
-            return View(sFinal);
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
+            {
+
+                if (id == null || _context.SFinal == null)
+                {
+                    return NotFound();
+                }
+
+                var sFinal = await _context.SFinal.FindAsync(id);
+                if (sFinal == null)
+                {
+                    return NotFound();
+                }
+                return View(sFinal);
+
+
+
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            
         }
 
         // POST: SFinals/Edit/5
@@ -139,19 +253,48 @@ namespace StajyerTakipSistemi.Web.Controllers
         // GET: SFinals/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.SFinal == null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                return NotFound();
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
+            {
+
+                if (id == null || _context.SFinal == null)
+                {
+                    return NotFound();
+                }
+
+                var sFinal = await _context.SFinal
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (sFinal == null)
+                {
+                    return NotFound();
+                }
+
+                return View(sFinal);
+
+
+
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
             }
 
-            var sFinal = await _context.SFinal
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (sFinal == null)
-            {
-                return NotFound();
-            }
-
-            return View(sFinal);
+           
         }
 
         // POST: SFinals/Delete/5
@@ -181,57 +324,120 @@ namespace StajyerTakipSistemi.Web.Controllers
 
         public async Task<IActionResult> ManageFinals()
         {
-            var userId = int.Parse(HttpContext.Session.GetString("UserId"));
 
-            if (_context.SFinal == null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                return View(Problem("Entity set 'StajyerTakipSistemiDbContext.SFinal' is null."));
+                return RedirectToAction("Login", "Home");
             }
-
-            var assignedInterns = _context.SInternToManagers
-                .Where(s => s.ManagerId == userId)
-                .ToList();
-
-            var recs = new List<SFinal>();
-            var interns = new List<SIntern>();
-
-            foreach (var assignedIntern in assignedInterns)
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && (isAdminGuidValid == true || isManagerGuidValid == true))
             {
-                var rec = _context.SFinal.FirstOrDefault(s => s.InternId == assignedIntern.InternId);
-                if (rec != null)
-                {
-                    recs.Add(rec);
 
-                    var intern = _context.SInterns.FirstOrDefault(s => s.Id == assignedIntern.InternId);
-                    if (intern != null)
+
+
+
+                var userId = int.Parse(HttpContext.Session.GetString("UserId"));
+
+                if (_context.SFinal == null)
+                {
+                    return View(Problem("Entity set 'StajyerTakipSistemiDbContext.SFinal' is null."));
+                }
+
+                var assignedInterns = _context.SInternToManagers
+                    .Where(s => s.ManagerId == userId)
+                    .ToList();
+
+                var recs = new List<SFinal>();
+                var interns = new List<SIntern>();
+
+                foreach (var assignedIntern in assignedInterns)
+                {
+                    var rec = _context.SFinal.FirstOrDefault(s => s.InternId == assignedIntern.InternId);
+                    if (rec != null)
                     {
-                        interns.Add(intern);
+                        recs.Add(rec);
+
+                        var intern = _context.SInterns.FirstOrDefault(s => s.Id == assignedIntern.InternId);
+                        if (intern != null)
+                        {
+                            interns.Add(intern);
+                        }
                     }
                 }
+
+                ViewData["interns"] = interns;
+
+                return View(recs);
+
+
+            }
+            else if (isInternGuidValid == true )
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
             }
 
-            ViewData["interns"] = interns;
 
-            return View(recs);
         }
         public async Task<IActionResult> DetailsForManager(int? id)
         {
-            var interns = _context.SInterns.ToList();
 
-            ViewData["interns"] = interns;
-            if (id == null || _context.SFinal == null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                return NotFound();
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && isManagerGuidValid == true)
+            {
+
+                var interns = _context.SInterns.ToList();
+
+                ViewData["interns"] = interns;
+                if (id == null || _context.SFinal == null)
+                {
+                    return NotFound();
+                }
+
+                var sFinal = await _context.SFinal
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (sFinal == null)
+                {
+                    return NotFound();
+                }
+
+                return View(sFinal);
+
+            }
+            else if (isInternGuidValid == true || isAdminGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
             }
 
-            var sFinal = await _context.SFinal
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (sFinal == null)
-            {
-                return NotFound();
-            }
 
-            return View(sFinal);
+
+
+            
         }
     }
 }

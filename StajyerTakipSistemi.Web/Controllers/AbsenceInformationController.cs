@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Bcpg;
+using StajyerTakipSistemi.Web;
 using StajyerTakipSistemi.Web.Controllers;
 using StajyerTakipSistemi.Web.Models;
 
 namespace WebApplication6.Web.Controllers
 {
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class AbsenceInformationController : Controller
     {
         
@@ -21,51 +24,77 @@ namespace WebApplication6.Web.Controllers
 
         public async Task<IActionResult> Index(int? id)
         {
-            int internId = 0;
+            var guidString = HttpContext.Session.GetString("Guid");
+            var loggedinuserid = int.Parse(HttpContext.Session.GetString("UserId"));
 
-            if (id.HasValue)
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                internId = id.Value; // "id" parametresi aktarıldıysa kullan
+                return RedirectToAction("Login", "Home");
             }
-            else
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if ((isInternGuidValid == true && loggedinuserid==id) || isManagerGuidValid == true)
             {
-                // "id" parametresi aktarılmamışsa, session'dan "UserId" değerini al
-                string userIdStr = HttpContext.Session.GetString("UserId");
+                int internId = 0;
 
-                if (!string.IsNullOrEmpty(userIdStr) && int.TryParse(userIdStr, out int parsedUserId))
+                if (id.HasValue)
                 {
-                    internId = parsedUserId;
+                    internId = id.Value; // "id" parametresi aktarıldıysa kullan
                 }
                 else
                 {
-                    Console.WriteLine("hata");
+                    // "id" parametresi aktarılmamışsa, session'dan "UserId" değerini al
+                    string userIdStr = HttpContext.Session.GetString("UserId");
+
+                    if (!string.IsNullOrEmpty(userIdStr) && int.TryParse(userIdStr, out int parsedUserId))
+                    {
+                        internId = parsedUserId;
+                    }
+                    else
+                    {
+                        Console.WriteLine("hata");
+                    }
+                }
+
+                var intern = _context.SInterns.FirstOrDefault(s => s.Id == internId);
+
+                if (intern != null)
+                {
+                    var absenceInfos = _context.SAbsenceInformations.Where(s => s.InternId == internId).ToList();
+                    List<string> markedDates = absenceInfos
+                                .Where(a => a.AbsenceDate.HasValue)
+                                .Select(a => a.AbsenceDate.Value.ToString("yyyy-MM-dd"))
+                                .ToList();
+
+                    ViewBag.MarkedDates = markedDates;
+
+                    var viewModel = new InternAbsenceViewModel
+                    {
+                        Intern = intern,
+                        AbsenceInfo = absenceInfos,
+                    };
+
+                    return View(viewModel);
+                }
+                else
+                {
+                    return RedirectToAction("Login");
                 }
             }
-
-            var intern = _context.SInterns.FirstOrDefault(s => s.Id == internId);
-
-            if (intern != null)
+            else if (isAdminGuidValid==true || (isInternGuidValid == true && loggedinuserid != id))
             {
-                var absenceInfos = _context.SAbsenceInformations.Where(s => s.InternId == internId).ToList();
-                List<string> markedDates = absenceInfos
-                            .Where(a => a.AbsenceDate.HasValue)
-                            .Select(a => a.AbsenceDate.Value.ToString("yyyy-MM-dd"))
-                            .ToList();
-
-                ViewBag.MarkedDates = markedDates;
-
-                var viewModel = new InternAbsenceViewModel
-                {
-                    Intern = intern,
-                    AbsenceInfo = absenceInfos,
-                };
-
-                return View(viewModel);
+                return RedirectToAction("Error", "Home");
             }
             else
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Home");
             }
+
+           
         }
 
 

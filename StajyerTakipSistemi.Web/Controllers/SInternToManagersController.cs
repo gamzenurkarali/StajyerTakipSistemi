@@ -9,6 +9,7 @@ using StajyerTakipSistemi.Web.Models;
 
 namespace StajyerTakipSistemi.Web.Controllers
 {
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class SInternToManagersController : Controller
     {
         private readonly StajyerTakipSistemiDbContext _context;
@@ -21,54 +22,129 @@ namespace StajyerTakipSistemi.Web.Controllers
         // GET: SInternToManagers
         public async Task<IActionResult> Index()
         {
-            var stajyerTakipSistemiDbContext = _context.SInternToManagers.Include(s => s.Intern).Include(s => s.Manager);
-            return View(await stajyerTakipSistemiDbContext.ToListAsync());
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
+            {
+                var stajyerTakipSistemiDbContext = _context.SInternToManagers.Include(s => s.Intern).Include(s => s.Manager);
+                return View(await stajyerTakipSistemiDbContext.ToListAsync());
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            
         }
 
         // GET: SInternToManagers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.SInternToManagers == null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                return NotFound();
+                return RedirectToAction("Login", "Home");
             }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
 
-            var sInternToManager = await _context.SInternToManagers
-                .Include(s => s.Intern)
-                .Include(s => s.Manager)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (sInternToManager == null)
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
             {
-                return NotFound();
+                if (id == null || _context.SInternToManagers == null)
+                {
+                    return NotFound();
+                }
+
+                var sInternToManager = await _context.SInternToManagers
+                    .Include(s => s.Intern)
+                    .Include(s => s.Manager)
+                    .FirstOrDefaultAsync(m => m.Id == id);
+
+                if (sInternToManager == null)
+                {
+                    return NotFound();
+                }
+
+
+                ViewData["InternName"] = sInternToManager.Intern.FirstName + " " + sInternToManager.Intern.LastName;
+                ViewData["ManagerName"] = sInternToManager.Manager.FirstName + " " + sInternToManager.Manager.LastName;
+
+                return View(sInternToManager);
             }
-
-             
-            ViewData["InternName"] = sInternToManager.Intern.FirstName + " " + sInternToManager.Intern.LastName;
-            ViewData["ManagerName"] = sInternToManager.Manager.FirstName + " " + sInternToManager.Manager.LastName;
-
-            return View(sInternToManager);
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+           
         }
 
         // GET: SInternToManagers/Create
         public IActionResult Create()
         {
-            var internList = _context.SInterns.Select(i => new
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                Id = i.Id,
-                FullName = i.FirstName + " " + i.LastName  
-            }).ToList();
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
 
-            var managerList = _context.SManagers.Select(m => new
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
             {
-                Id = m.Id,
-                FullName = m.FirstName + " " + m.LastName  
-            }).ToList();
+                var internList = _context.SInterns.Select(i => new
+                {
+                    Id = i.Id,
+                    FullName = i.FirstName + " " + i.LastName
+                }).ToList();
 
-            ViewBag.InternId = new SelectList(internList, "Id", "FullName");
-            ViewBag.ManagerId = new SelectList(managerList, "Id", "FullName");
+                var managerList = _context.SManagers.Select(m => new
+                {
+                    Id = m.Id,
+                    FullName = m.FirstName + " " + m.LastName
+                }).ToList();
 
-            return View();
+                ViewBag.InternId = new SelectList(internList, "Id", "FullName");
+                ViewBag.ManagerId = new SelectList(managerList, "Id", "FullName");
+
+                return View();
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            
         }
 
         // POST: SInternToManagers/Create
@@ -121,38 +197,63 @@ namespace StajyerTakipSistemi.Web.Controllers
         // GET: SInternToManagers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.SInternToManagers == null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                return NotFound();
+                return RedirectToAction("Login", "Home");
             }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
 
-            var sInternToManager = await _context.SInternToManagers.FindAsync(id);
-
-            if (sInternToManager == null)
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
             {
-                return NotFound();
+                if (id == null || _context.SInternToManagers == null)
+                {
+                    return NotFound();
+                }
+
+                var sInternToManager = await _context.SInternToManagers.FindAsync(id);
+
+                if (sInternToManager == null)
+                {
+                    return NotFound();
+                }
+
+
+                var internList = _context.SInterns.Select(i => new
+                {
+                    Id = i.Id,
+                    FullName = i.FirstName + " " + i.LastName
+                }).ToList();
+
+                var managerList = _context.SManagers.Select(m => new
+                {
+                    Id = m.Id,
+                    FullName = m.FirstName + " " + m.LastName
+                }).ToList();
+
+                ViewBag.InternId = new SelectList(internList, "Id", "FullName", sInternToManager.InternId);
+                ViewBag.ManagerId = new SelectList(managerList, "Id", "FullName", sInternToManager.ManagerId);
+
+
+                //var intern = _context.SInterns.FirstOrDefault(s=>s.Id==sInternToManager.InternId);
+                //ViewBag.Intern = intern;
+                return View(sInternToManager);
             }
-
-             
-            var internList = _context.SInterns.Select(i => new
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
             {
-                Id = i.Id,
-                FullName = i.FirstName + " " + i.LastName
-            }).ToList();
-
-            var managerList = _context.SManagers.Select(m => new
+                return RedirectToAction("Error", "Home");
+            }
+            else
             {
-                Id = m.Id,
-                FullName = m.FirstName + " " + m.LastName
-            }).ToList();
-
-            ViewBag.InternId = new SelectList(internList, "Id", "FullName", sInternToManager.InternId);
-            ViewBag.ManagerId = new SelectList(managerList, "Id", "FullName", sInternToManager.ManagerId);
-
-
-            //var intern = _context.SInterns.FirstOrDefault(s=>s.Id==sInternToManager.InternId);
-            //ViewBag.Intern = intern;
-            return View(sInternToManager);
+                return RedirectToAction("Login", "Home");
+            }
+           
         }
 
         // POST: SInternToManagers/Edit/5
@@ -222,26 +323,51 @@ namespace StajyerTakipSistemi.Web.Controllers
         // GET: SInternToManagers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.SInternToManagers == null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                return NotFound();
+                return RedirectToAction("Login", "Home");
             }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
 
-            var sInternToManager = await _context.SInternToManagers
-                .Include(s => s.Intern)
-                .Include(s => s.Manager)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (sInternToManager == null)
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
             {
-                return NotFound();
-            }
+                if (id == null || _context.SInternToManagers == null)
+                {
+                    return NotFound();
+                }
 
+                var sInternToManager = await _context.SInternToManagers
+                    .Include(s => s.Intern)
+                    .Include(s => s.Manager)
+                    .FirstOrDefaultAsync(m => m.Id == id);
+
+                if (sInternToManager == null)
+                {
+                    return NotFound();
+                }
+
+
+                ViewData["InternName"] = sInternToManager.Intern.FirstName + " " + sInternToManager.Intern.LastName;
+                ViewData["ManagerName"] = sInternToManager.Manager.FirstName + " " + sInternToManager.Manager.LastName;
+
+                return View(sInternToManager);
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
             
-            ViewData["InternName"] = sInternToManager.Intern.FirstName + " " + sInternToManager.Intern.LastName;
-            ViewData["ManagerName"] = sInternToManager.Manager.FirstName + " " + sInternToManager.Manager.LastName;
-
-            return View(sInternToManager);
         }
 
         // POST: SInternToManagers/Delete/5

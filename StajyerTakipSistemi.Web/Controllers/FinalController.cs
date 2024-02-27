@@ -6,9 +6,11 @@ using System.Net.Mail;
 using MailKit.Net.Smtp;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 using System.Reflection.Metadata;
+using Microsoft.EntityFrameworkCore;
 
 namespace StajyerTakipSistemi.Web.Controllers
 {
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class FinalController : Controller
     {
         private readonly StajyerTakipSistemiDbContext _context;
@@ -25,23 +27,48 @@ namespace StajyerTakipSistemi.Web.Controllers
         }
         public async Task<IActionResult> Final()
         {
-            if (HttpContext.Session.GetString("UserId")!=null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                var hasRecord = _context.SFinal.Any(s => s.InternId == int.Parse(HttpContext.Session.GetString("UserId")));
-                if (hasRecord)
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+
+            if (HttpContext.Session.GetString("UserId") != null && isInternGuidValid == true)
+            {
+                if (HttpContext.Session.GetString("UserId") != null)
                 {
-                    ViewBag.Flag = true;
+                    var hasRecord = _context.SFinal.Any(s => s.InternId == int.Parse(HttpContext.Session.GetString("UserId")));
+                    if (hasRecord)
+                    {
+                        ViewBag.Flag = true;
+                    }
+                    else
+                    {
+                        ViewBag.Flag = false;
+                    }
+                    return View();
                 }
                 else
                 {
-                    ViewBag.Flag = false;
+                    return View("Login", "Home");
                 }
-                return View();
+            }
+            else if (isAdminGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
             }
             else
             {
-                return View("Login","Home");
+                return RedirectToAction("Login", "Home");
             }
+           
         }
 
         [HttpPost]
@@ -178,8 +205,36 @@ namespace StajyerTakipSistemi.Web.Controllers
         }
         public async Task<IActionResult> Evaluate(int id)
         {
-            TempData["FinalId"] = id;
-            return View();
+
+
+
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+
+            if (HttpContext.Session.GetString("UserId") != null && isInternGuidValid == true)
+            {
+                TempData["FinalId"] = id;
+                return View();
+            }
+            else if (isAdminGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+           
         }
         public async Task<IActionResult> EvaluateForManager(int id)
         {

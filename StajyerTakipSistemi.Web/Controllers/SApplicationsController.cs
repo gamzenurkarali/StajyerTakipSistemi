@@ -12,9 +12,10 @@ using MimeKit;
 using StajyerTakipSistemi.Web.Models;
 using static Google.Apis.Storage.v1.Data.Bucket.LifecycleData;
 using Microsoft.Extensions.Hosting.Internal;
-
+using StajyerTakipSistemi;
 namespace StajyerTakipSistemi.Web.Controllers
 {
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class SApplicationsController : Controller
     {
         private readonly StajyerTakipSistemiDbContext _context;
@@ -30,33 +31,106 @@ namespace StajyerTakipSistemi.Web.Controllers
         // GET: SApplications
         public async Task<IActionResult> Index()
         {
-              return _context.SApplications != null ? 
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
+            { 
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
+            {
+                return _context.SApplications != null ?
                           View(await _context.SApplications.ToListAsync()) :
                           Problem("Entity set 'StajyerTakipSistemiDbContext.SApplications'  is null.");
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            
         }
 
         // GET: SApplications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.SApplications == null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                return NotFound();
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
+            {
+                if (id == null || _context.SApplications == null)
+                {
+                    return NotFound();
+                }
+
+                var sApplication = await _context.SApplications
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (sApplication == null)
+                {
+                    return NotFound();
+                }
+
+                return View(sApplication);
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
             }
 
-            var sApplication = await _context.SApplications
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (sApplication == null)
-            {
-                return NotFound();
-            }
-
-            return View(sApplication);
         }
 
         // GET: SApplications/Create
         public IActionResult Create()
         {
-            return View();
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
+            {
+                return View();
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
         }
         private bool IsValidEmail(string email)
         {
@@ -185,17 +259,41 @@ namespace StajyerTakipSistemi.Web.Controllers
         // GET: SApplications/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.SApplications == null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                return NotFound();
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
+            {
+                if (id == null || _context.SApplications == null)
+                {
+                    return NotFound();
+                }
+
+                var sApplication = await _context.SApplications.FindAsync(id);
+                if (sApplication == null)
+                {
+                    return NotFound();
+                }
+                return View(sApplication);
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
             }
 
-            var sApplication = await _context.SApplications.FindAsync(id);
-            if (sApplication == null)
-            {
-                return NotFound();
-            }
-            return View(sApplication);
         }
 
         // POST: SApplications/Edit/5
@@ -596,19 +694,43 @@ namespace StajyerTakipSistemi.Web.Controllers
         // GET: SApplications/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.SApplications == null)
+            var guidString = HttpContext.Session.GetString("Guid");
+
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                return NotFound();
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            if (HttpContext.Session.GetString("UserId") != null && isAdminGuidValid == true)
+            {
+                if (id == null || _context.SApplications == null)
+                {
+                    return NotFound();
+                }
+
+                var sApplication = await _context.SApplications
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (sApplication == null)
+                {
+                    return NotFound();
+                }
+
+                return View(sApplication);
+            }
+            else if (isInternGuidValid == true || isManagerGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
             }
 
-            var sApplication = await _context.SApplications
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (sApplication == null)
-            {
-                return NotFound();
-            }
-
-            return View(sApplication);
         }
 
         // POST: SApplications/Delete/5

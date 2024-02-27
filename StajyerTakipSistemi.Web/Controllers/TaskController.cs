@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StajyerTakipSistemi.Web.Models;
 
 namespace StajyerTakipSistemi.Web.Controllers
 {
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class TaskController : Controller
     {
         public readonly StajyerTakipSistemiDbContext _context;
@@ -19,54 +21,95 @@ namespace StajyerTakipSistemi.Web.Controllers
         }
         public async Task<IActionResult> ShowOverdueTasks(int? id)
         {
-            if (HttpContext.Session.GetString("UserId") != null)
+            var guidString = HttpContext.Session.GetString("Guid");
+            var loggedinuser = int.Parse(HttpContext.Session.GetString("UserId"));
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
             {
-                var intern = _context.SInterns.FirstOrDefault(i => i.Id == id);
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
 
-                if (intern != null)
+            if((HttpContext.Session.GetString("UserId") != null && (isManagerGuidValid == true || (isInternGuidValid == true && loggedinuser == id))))
+            {
+                if (HttpContext.Session.GetString("UserId") != null)
                 {
-                     
-                    var assignedTasks = _context.SAssignedTasks.Where(s => s.InternId == id).ToList();
-                    var overdueTasks = assignedTasks.Where(t => t.DueDate.HasValue && t.DueDate < DateTime.Now.Date).ToList();
-                    var taskDetails = new List<STaskDetail>();  
+                    var intern = _context.SInterns.FirstOrDefault(i => i.Id == id);
 
-                    foreach (var activeTask in overdueTasks)
+                    if (intern != null)
                     {
-                        var taskDetail = _context.STaskDetails.FirstOrDefault(td => td.Id == activeTask.TaskId);
 
-                        if (taskDetail != null)
+                        var assignedTasks = _context.SAssignedTasks.Where(s => s.InternId == id).ToList();
+                        var overdueTasks = assignedTasks.Where(t => t.DueDate.HasValue && t.DueDate < DateTime.Now.Date).ToList();
+                        var taskDetails = new List<STaskDetail>();
+
+                        foreach (var activeTask in overdueTasks)
                         {
-                            taskDetails.Add(taskDetail);
+                            var taskDetail = _context.STaskDetails.FirstOrDefault(td => td.Id == activeTask.TaskId);
+
+                            if (taskDetail != null)
+                            {
+                                taskDetails.Add(taskDetail);
+                            }
                         }
+
+                        var viewModel = new InternTaskViewModel
+                        {
+                            Intern = intern,
+                            AssignedTasks = overdueTasks,
+                            TaskDetails = taskDetails
+                        };
+                        ViewBag.username = HttpContext.Session.GetString("Username");
+                        return View(viewModel);
                     }
 
-                    var viewModel = new InternTaskViewModel
-                    {
-                        Intern = intern,
-                        AssignedTasks = overdueTasks,
-                        TaskDetails = taskDetails
-                    };
-                    ViewBag.username = HttpContext.Session.GetString("Username");
-                    return View(viewModel);
                 }
 
+                return RedirectToAction("Login");
             }
-
-            return RedirectToAction("Login");
+            else if (isAdminGuidValid == true )
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+           
         }
 
 
         public async Task<IActionResult> ShowActiveTasks(int? id)
         {
-            if (HttpContext.Session.GetString("UserId") != null)
-            {
-                var intern = _context.SInterns.FirstOrDefault(i => i.Id == id);
+            var guidString = HttpContext.Session.GetString("Guid");
+            var loggedinuser = int.Parse(HttpContext.Session.GetString("UserId"));
 
-               if (intern != null)
+            if (string.IsNullOrWhiteSpace(guidString) || !Guid.TryParse(guidString, out Guid userGuid))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            var userAdminExist = new UserAdminExist(_context);
+            bool isAdminGuidValid = userAdminExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userInternExist = new UserInternExist(_context);
+            bool isInternGuidValid = userInternExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+            var userManagerExist = new UserManagerExist(_context);
+            bool isManagerGuidValid = userManagerExist.CheckGuid(HttpContext.Session.GetString("Guid"));
+
+            if (HttpContext.Session.GetString("UserId") != null && (isManagerGuidValid == true || (isInternGuidValid == true && loggedinuser==id ) ))
+            {
+                if (HttpContext.Session.GetString("UserId") != null)
+                {
+                    var intern = _context.SInterns.FirstOrDefault(i => i.Id == id);
+
+                    if (intern != null)
                     {
                         var assignedTasks = _context.SAssignedTasks.Where(s => s.InternId == id).ToList();
                         var activeTasks = assignedTasks.Where(t => t.DueDate.HasValue && t.DueDate >= DateTime.Now.Date).ToList();
-                        var taskDetails = new List<STaskDetail>(); 
+                        var taskDetails = new List<STaskDetail>();
 
                         foreach (var activeTask in activeTasks)
                         {
@@ -81,16 +124,26 @@ namespace StajyerTakipSistemi.Web.Controllers
                         var viewModel = new InternTaskViewModel
                         {
                             Intern = intern,
-                            AssignedTasks =activeTasks,
+                            AssignedTasks = activeTasks,
                             TaskDetails = taskDetails
                         };
-                    ViewBag.username = HttpContext.Session.GetString("Username");
-                    return View(viewModel);
-                }
-                 
-            }
+                        ViewBag.username = HttpContext.Session.GetString("Username");
+                        return View(viewModel);
+                    }
 
-            return RedirectToAction("Login");
+                }
+
+                return RedirectToAction("Login");
+            }
+            else if (isAdminGuidValid == true)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            
         }
         [HttpPost]
         public ActionResult deleteTask(int taskId)

@@ -359,7 +359,9 @@
                                     <img src="@Url.Content("~/ProfilePictures/" + user.Photo)" style="border-radius: 50%; width: 50px; height: 50px; margin-right: 1rem; background-color: White;" />
                                 }
                                 
-                                <p><strong><a style="text-decoration:none;font-size: smaller;" href='@Url.Action("getusermessage", "Chat", new { userGuid = user.Guid })' style="color: @(newMessagesCount > 0 ? "red" : "black")">@user.FirstName @user.LastName</a></strong></p>
+                                <p><strong><a style="text-decoration:none;font-size: smaller;" 
+                                    href='@Url.Action("getusermessage", "Chat", new { userGuid = user.Guid })'
+                                    style="color: @(newMessagesCount > 0 ? "red" : "black")">@user.FirstName @user.LastName</a></strong></p>
                             </div>
                             
                         }

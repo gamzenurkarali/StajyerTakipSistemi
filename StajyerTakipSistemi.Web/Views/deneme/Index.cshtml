@@ -1,0 +1,26 @@
+﻿@model List<StajyerTakipSistemi.Web.Models.SManager>
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+          <th>
+              ad
+          </th>
+          <th>
+              soyad
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
