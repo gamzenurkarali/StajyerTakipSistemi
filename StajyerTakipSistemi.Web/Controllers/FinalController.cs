@@ -154,7 +154,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                         fileData = memoryStream.ToArray();
                     }
                     var intern = _context.SInterns.FirstOrDefault(s=>s.Id==sFinal.InternId);
-                    var from = "stajyertakip@gmail.com";
+                    var from = "your gmail address";
                     var to = intern.Email;
                     var subject = "Stajınız puanlandı.";
                     var content = "";
@@ -180,7 +180,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                         using (var client = new SmtpClient())
                         {
                             client.Connect("smtp.gmail.com", 587, false);
-                            client.Authenticate("stajyertakip@gmail.com", "aircjpwffhjocewl");
+                            client.Authenticate("your gmail address", "your gmail application password");
 
                             client.Send(message);
                             client.Disconnect(true);

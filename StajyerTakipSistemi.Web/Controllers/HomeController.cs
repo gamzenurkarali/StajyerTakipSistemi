@@ -769,7 +769,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                 using (var client = new SmtpClient())
                 {
                     client.Connect("smtp.gmail.com", 587, false);
-                    client.Authenticate("stajyertakip@gmail.com", "aircjpwffhjocewl"); 
+                    client.Authenticate("your gmail address", "your gmail application password"); 
 
                     client.Send(message);
                     client.Disconnect(true);
@@ -830,7 +830,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                 _context.PasswordResetTokens.Add(tokenData);
                 _context.SaveChanges();
                 
-                var from = "stajyertakip@gmail.com";
+                var from = "your gmail address";
                 var to = inputName;
                 var subject = "Şifreni Sıfırla 👾";
                 var content = $"Şifreni sıfırlamak için bu linke tıkla: https://localhost:44373/Home/ChangePassword?token={token}";

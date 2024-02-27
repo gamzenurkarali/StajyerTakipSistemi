@@ -250,7 +250,7 @@ namespace StajyerTakipSistemi.Web.Controllers
 
 
 
-                var from = "stajyertakip@gmail.com";
+                var from = "your gmail address";
                 var to = sIntern.Email;
                 var subject = "İNSPİMO Staj Kabul";
                 var content = "<h2 style=\"color: #3498db;\">İNSPİMO Staj Başvurunuz Onaylandı!</h2>";
@@ -276,7 +276,7 @@ namespace StajyerTakipSistemi.Web.Controllers
                     using (var client = new SmtpClient())
                     {
                         client.Connect("smtp.gmail.com", 587, false);
-                        client.Authenticate("stajyertakip@gmail.com", "aircjpwffhjocewl");
+                        client.Authenticate("your gmail address", "your gmail application password");
 
                         client.Send(message);
                         client.Disconnect(true);
